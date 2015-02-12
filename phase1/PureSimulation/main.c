@@ -1,6 +1,6 @@
 // main.c, 159
 // simulated kernel
-//
+// 
 // Team Name: evo  (Members: Aaron Blancaflor and Jayson Francis)
 
 #include "spede.h"      // spede stuff
