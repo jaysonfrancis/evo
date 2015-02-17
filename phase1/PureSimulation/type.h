@@ -23,5 +23,5 @@ typedef struct {             // proc queue type
    int head, tail, size;     // where head and tail are, and current size
    int q[Q_SIZE];            // indices into q[] array to place or get element
 } q_t;
-
+//aaron editing type.h
 #endif
