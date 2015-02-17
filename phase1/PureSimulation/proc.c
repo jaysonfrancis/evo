@@ -23,3 +23,6 @@ void UserProc() {
    cons_printf("%d ", CRP); // print its pid (CRP) on PC
    for (i=0; i<100000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
 }
+
+
+
