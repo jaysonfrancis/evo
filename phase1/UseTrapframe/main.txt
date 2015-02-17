@@ -3,6 +3,15 @@
 //
 // skeleton of main() for phase 1
 
+/* Instruction pointer, and the stack pointer, are the most impotant pointers in the cpu. The switching is between the kernel code and the process code 
+Instruction Pointer --> Instruction
+Stack Pointer --> Stack 
+There is a proces code that runs in the process space. The switching to this process,
+Instruction --> Idle, UserProc
+IDT --> TimerEntryCode (Begining of the interrupt handling), eventually going to kenerl code
+Inside kernel code, call subroutines, (Interrupt service routine).. Kernels dutie is to load process
+Runtime stack is always being used to do the push and pop. 
+
 include statements...
 declare kernel data structures...
 (include stuff from timer lab and new PCB described in 1.html)
