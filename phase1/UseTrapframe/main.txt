@@ -15,6 +15,7 @@ Runtime stack is always being used to do the push and pop.
 include statements...
 declare kernel data structures...
 (include stuff from timer lab and new PCB described in 1.html)
+// setentry, setidtentry, idttable
 
 (some needed subroutines here, prototype them in main.h)
 InitData() still the same as PureSimulation
@@ -25,22 +26,22 @@ SetEntry() needed from timer lab
 
 InitIDT() is new to code, containing 3 statements from timer lab:
    locate IDT
-   fill out IDT timer entry
+   fill out IDT timer entry, set entry 32
    program PIC mask
    (but NO "sti")
 
 int main() {
    call InitData() to initialize kernel data structure
    call (new) InitIDT() to set up timer (from timer lab)
-   call CreateISR() to create Idle proc
-   call Dispatch(pcb[...) to load Idle proc to run
+   call CreateISR() to create Idle proc. create with 0
+   call Dispatch(pcb[...) to load Idle proc to run pcb[0].TF_ptr
 
-   return 0;
+   return 0; // never reaches this.
 } // main ends
 
 void Kernel(TF_t *TF_ptr) {
-   change to kernel mode for CRP
-   save TF_ptr to PCB of CRP
+   change to kernel mode for CRP - change to kmode
+   save TF_ptr to PCB of CRP 
 
    switch upon intr_num pointed by TF_ptr to call corresponging ISR {
       if it's TIMER_INTR:
