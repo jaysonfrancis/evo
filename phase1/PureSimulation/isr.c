@@ -1,10 +1,10 @@
 // isr.c, 159
 // test another test :) HI JAY
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //Aaron
-=======
+//=======
 // jayson
->>>>>>> origin/master
+//>>>>>>> origin/master
 #include "spede.h"
 #include "type.h"
 #include "isr.h"
