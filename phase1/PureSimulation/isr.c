@@ -1,15 +1,4 @@
 // isr.c, 159
-// test another test :) HI JAY
-<<<<<<< HEAD
-//<<<<<<< HEAD
-//Aaron
-//=======
-// jayson
-//>>>>>>> origin/master
-=======
-//Aaron
-// jayson
->>>>>>> 03af05e1cb55900e8ba075b7a3d13119eacb8a02
 #include "spede.h"
 #include "type.h"
 #include "isr.h"
@@ -34,20 +23,22 @@ void CreateISR(int pid) {
 void TerminateISR() {
    if(CRP==0 | CRP==1) return 0;//just return if CRP is 0 or -1 (Idle or not given)
       
-   //change state of CRP to NONE
-   //queue it to none queue
+   pcb[CRP].state = NONE;//change state of CRP to NONE
+   enQ(CRP,&none_q);//queue it to none queue
    CRP = -1;//set CRP to -1 (none)
 }        
 
 void TimerISR() {
-        //just return if CRP is Idle (0) or less (-1)
+        if(CRP==0 | CRP==-1) return 0; //just return if CRP is Idle (0) or less (-1)
 
-        //upcount the runtime of CRP
+        pcb[CRP].runtime++;//upcount the runtime of CRP
 
-       //if the runtime of CRP reaches TIME_LIMIT
-       //(need to rotate to next PID in run queue)
-      //sum up runtime to the total runtime of CRP
-      //change its state to RUN
-      //queue it to run queue
-      //reset CRP (to -1, means none)
+       if (pcb[CRP].runtime == TIME_LIMIT){ //if the runtime of CRP reaches TIME_LIMIT
+		    ??//(need to rotate to next PID in run queue)
+			pcb[CRP].runtime;//sum up runtime to the total runtime of CRP
+			pcb[CRP].state = RUN;//change its state to RUN
+			enQ(CRP,&run_q);//queue it to run queue
+			CRP=-1; //reset CRP (to -1, means none)     
+	   }
+       
 }
