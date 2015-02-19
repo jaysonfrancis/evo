@@ -14,14 +14,15 @@ void Dispatch() {
 
 void Idle() {
    int i; // We added
-   cons_putchar('0'); // print 0 ON PC?
-   for (i=0; i<333200000000000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
+  // cons_putchar('0');
+   cons_printf("0 "); // print 0 ON PC?
+   for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
 }
 
 void UserProc() {
    int i; // We added
    cons_printf("%d ", CRP); // print its pid (CRP) on PC
-   for (i=0; i<333200000000000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
+   for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
 }
 
 
