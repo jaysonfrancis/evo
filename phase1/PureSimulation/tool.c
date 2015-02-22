@@ -17,15 +17,26 @@ for (i=0; i<size; i++){
   p++;
  }
 
+ // p->count = 0;
+ // p->head = 0;
+ // p->tail = 0;
+ 
 }
 
 void EnQ(int pid, q_t *p) {
 // ?????????????????????????????????????????????????
-  if (p->size == Q_SIZE) { cons_printf("The q is full"); return; } // Show error msg and return if Q is full
-  p->tail = p->tail + 1; // Add to the tail of the queue
-  p->q[p->tail] = pid; // Queue passed pid into the tail of the queue
-  p->size++; // Increase size of queue. (tail++)
-  if(p->tail == Q_SIZE) { p->tail = 0; } // show error msg and return if queue's already full
+ // if (p->size == Q_SIZE) { cons_printf("The q is full"); return; } // Show error msg and return if Q is full
+ // p->tail = p->tail + 1; // Add to the tail of the queue
+ // p->q[p->tail] = pid; // Queue passed pid into the tail of the queue
+ // p->size++; // Increase size of queue. (tail++)
+ // if(p->tail == Q_SIZE) { p->tail = 0; } // show error msg and return if queue's already full
+  
+  if (p->size == Q_SIZE) { cons_printf("The q is full"); return; }
+  p->q[p->tail] = pid;
+  p->tail = (p->tail + 1) % Q_SIZE;
+  p->size++;
+  return;
+  
 // needs coding
 // Enque from the tail, tail always points to available space, 
 // check Q_size == Q_size, display error message that queue is full
@@ -36,15 +47,23 @@ void EnQ(int pid, q_t *p) {
 int DeQ(q_t *p) { // return -1 if q is empty
 // ?????????????????????????????????????????????????
 // needs codingi
-  int tmp; 
-  if (p->size == 0){ return -1; }
-  tmp = p->q[p->head];
-  p->head = p->head + 1;
-  if (p->head == Q_SIZE) p->head=0;
-  p->size = p->size - 1;
-  return tmp;
+ // int tmp; 
+ // if (p->size == 0){ return -1; }
+ // tmp = p->q[p->head];
+ // p->head = p->head + 1;
+ // if (p->head == Q_SIZE) p->head=0;
+ // p->size = p->size - 1;
+ // return tmp;
 // Check if size == 0, then return -1. move the head ++, and check if head == q_size
 // ?????????????????????????????????????????????????
+  int pid;
+  if (p->size == 0){ return -1; }
+  tmp = p->q[p->head];
+  p->head = (p->head+1) % Q_SIZE;
+  p->size--;
+  
+  return pid;
+
 }
 
 

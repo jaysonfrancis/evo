@@ -11,7 +11,7 @@ void CreateISR(int pid) {
    if (pid != 0) EnQ(pid, &run_q);
 
  //  PCB of new proc:
-     MyBZero(&pcb[pid], sizeof(pcb_t));   
+    MyBZero(&pcb[pid], sizeof(pcb_t));   
 
     pcb[pid].mode = UMODE; // Mode is set to UMODE
     pcb[pid].state = RUN; // State is set to RUN
