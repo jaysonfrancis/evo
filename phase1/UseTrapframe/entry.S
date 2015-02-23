@@ -10,7 +10,6 @@
 .comm kstack, KSTACK_SIZE, 1 // define kernel stack space
 .text
 
-// Get trapframe address to load into stackframe pointer.
 // Dispatch() loads registers from trapframe to run
 ENTRY(Dispatch)
    movl 4(%esp), %eax   // load stack pointer from eax
@@ -27,7 +26,6 @@ ENTRY(Dispatch)
 ENTRY(TimerEntry)
    pushl $TIMER_INTR
    jmp IntoKernel
-
 
 // Common IRQ entry, save context and call Kmain()
 IntoKernel:

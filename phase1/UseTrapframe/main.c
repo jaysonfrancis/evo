@@ -1,58 +1,117 @@
 // CpE/CSc159
 // UseTrapframe/main.txt
-//
-// skeleton of main() for phase 1
+// Group name: Evo
+// Student Name: Jayson Francis & Aaron Blancaflor
 
-/* Instruction pointer, and the stack pointer, are the most impotant pointers in the cpu. The switching is between the kernel code and the process code 
-Instruction Pointer --> Instruction
-Stack Pointer --> Stack 
-There is a proces code that runs in the process space. The switching to this process,
-Instruction --> Idle, UserProc
-IDT --> TimerEntryCode (Begining of the interrupt handling), eventually going to kenerl code
-Inside kernel code, call subroutines, (Interrupt service routine).. Kernels dutie is to load process
-Runtime stack is always being used to do the push and pop. 
-*/
-include statements...
-declare kernel data structures...
-(include stuff from timer lab and new PCB described in 1.html)
-// setentry, setidtentry, idttable
+#include "spede.h"
+#include "type.h"
+#include "main.h"
+#include "isr.h"
+#include "proc.h"
+#include "tool.h"
+#include "entry.h"
+#include "TF.h"
 
-(some needed subroutines here, prototype them in main.h)
-InitData() still the same as PureSimulation
+int CRP;
+q_t run_q, none_q;
+pcb_t pcb[MAX_PROC];
+char stack[MAX_PROC][STACK_SIZE];
+struct i386_gate *IDT_ptr;
 
-SelectCRP() still the same as PureSimulation
+//InitData() still same as PureSimulation
+void InitData(){
+   int i;
+   //initializing 2 queues
+   MyBZero(&run_q, sizeof(run_q));
+   MyBZero(&none_q, sizeof(none_q));
+   
+   for(i=1; i<20; i++){
+	EnQ(i, &none_q);//queue PID's 1-19 into none_q
+	pcb[i].state = NONE; //set state to NONE in all unused PCB[1-19]
+   }//end for loop
+   CRP=0;
+}
 
-SetEntry() needed from timer lab
+//SelectCRP() still the same as PureSimulation
+void SelectCRP(){
+    if(CRP>0) return; //simply return  if CRP is greater than 0
+    
+    if (CRP == 0) pcb[CRP].state=RUN;
 
-InitIDT() is new to code, containing 3 statements from timer lab:
-   locate IDT
-   fill out IDT timer entry, set entry 32
-   program PIC mask
-   (but NO "sti")
+    if(run_q.size == 0)
+	CRP=0;
+    else
+	CRP = DeQ(&run_q);
+
+    pcb[CRP].mode = UMODE;
+    pcb[CRP].state = RUN;
+}
+
+//SetEntry() needed from timer lab
+void SetEntry(int entry_num, func_ptr_t func_ptr){
+    struct i386_gate *gateptr = &IDT_ptr[entry_num];
+    fill_gate(gateptr, (int)func_ptr, get_cs(), ACC_INTR_GATE, 0);
+}
+
+
+void InitIDT(){ //InitIDT() is new to code, containing 3 statements from timer lab
+  IDT_ptr = get_idt_base(); //locate IDT
+  SetEntry(32, TimerEntry);//fill out IDT timer entry, set entry 32
+  outportb(0x21, ~1);//program PIC mask
+  //(but NO "sti")
+}
 
 int main() {
-   //call InitData() to initialize kernel data structure
-   //call (new) InitIDT() to set up timer (from timer lab)
-   //call CreateISR() to create Idle proc. create with 0
-   //call Dispatch(pcb[...) to load Idle proc to run pcb[0].TF_ptr
+   InitData(); //call InitData() to initialize kernel data structure
+   InitIDT();  //call (new) InitIDT() to set up timer (from timer lab)
+   CreateISR(0); //call CreateISR() to create Idle proc. create with 0
+   Dispatch(pcb[0].TF_ptr);//call Dispatch(pcb[...) to load Idle proc to run pcb[0].TF_ptr
 
    return 0; // never reaches this.
 } // main ends
 
 void Kernel(TF_t *TF_ptr) {
-   //change to kernel mode for CRP - change to kmode
+  char key;
+  int pid;
+   pcb[CRP].mode = KMODE; //change to kernel mode for CRP - change to kmode
    //save TF_ptr to PCB of CRP 
+  pcb[CRP].TF_ptr = TF_ptr;
 
-   //switch upon intr_num pointed by TF_ptr to call corresponging ISR {
-      //if it's TIMER_INTR:
-         //call TimerISR()
-      //default:
-         //PANIC! msg and break into GDB
-   
+  switch(TF_ptr->intr_num){ 
+      case TIMER_INTR://if it's TIMER_INTR:
+        TimerISR(); //call TimerISR()
+	break;
+ 
+      default://default:
+         cons_printf("Something went wrong"); //PANIC! msg and break into GDB
+	 exit(0);
 
-// still handles other keyed-in simulated events
-   //(same as PureSimulation to handle key events)
+   }//end switch
 
-   //call SelectCRP() to select process to run
-   //call Dispatch(pcb[CRP].TF_ptr) to load it and run
+   if (cons_kbhit()){ // if key stoke is detected
+      //char key;
+      //int pid;
+	key = cons_getchar(); //determining what key was pressed
+
+	switch(key){
+	case 'n':
+	   if(none_q.size==0)cons_printf("No more processes!\n");
+	   else{
+             pid = DeQ(&none_q);
+	     CreateISR(pid);
+	   }//end else
+	   break;
+	case 't':
+	   TerminateISR();
+	   break;
+	case 'b':
+	   breakpoint();
+	   break;
+	case 'q':
+	   exit(0);
+	}//end switch statement 	
+   }//end if some key pressed
+
+   SelectCRP();//call SelectCRP() to select process to run
+   Dispatch(pcb[CRP].TF_ptr);//call Dispatch(pcb[CRP].TF_ptr) to load it and run
 }

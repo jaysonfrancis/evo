@@ -17,14 +17,11 @@ void CreateISR(int pid) {
     pcb[pid].state = RUN; // State is set to RUN
     pcb[pid].runtime = 0;
     pcb[pid].total_runtime = 0; // Both Runtime counts are reset to 0
-	//Added in trapFrame section
+   
+   //Added in trapFrame section
 	
 	
-	// ****************************************************
-	// besides code in old CreateISR() still included, add:
-	// ****************************************************
-
-	MyBzero(stack[pid], STACK_SIZE); // erase stack
+	MyBZero(stack[pid], STACK_SIZE); // erase stack
 
 	// point to just above stack, then drop by sizeof(TF_t)
 	pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
@@ -46,22 +43,25 @@ void CreateISR(int pid) {
 
 
 void TerminateISR() {
-   if(CRP < 1) return;//just return if CRP is 0 or -1 (Idle or not given)
-      
+   if(CRP < 1) return; //just return if CRP is 0 or -1 (Idle or not given 
    pcb[CRP].state = NONE;//change state of CRP to NONE
    EnQ(CRP,&none_q);//queue it to none queue
    CRP = -1;//set CRP to -1 (none)
+
 }        
 
 void TimerISR() {
-        if(CRP<=0) return; //just return if CRP is Idle (0) or less (-1)
+        outportb(0x20, 0x60); // Timer interrupt dismissed 
+	
+	if(CRP<=0) return; //just return if CRP is Idle (0) or less (-1)
+	
         pcb[CRP].runtime++;//upcount the runtime of CRP
+	
         if (pcb[CRP].runtime == TIME_LIMIT){ //if the runtime of CRP reaches TIME_LIMIT
-	 // ??//(need to rotate to next PID in run queue)
-	pcb[CRP].total_runtime += pcb[CRP].runtime;//sum up runtime to the total runtime of CRP
-	pcb[CRP].state=RUN;//change its state to RUN
-	EnQ(CRP,&run_q);//queue it to run queue
-	CRP=-1; //reset CRP (to -1, means none)     
-	   }
-       
+	  pcb[CRP].total_runtime += pcb[CRP].runtime;//sum up runtime to the total runtime of CRP
+	  pcb[CRP].state=RUN;//change its state to RUN
+	  EnQ(CRP,&run_q);//queue it to run queue
+	  CRP=-1; //reset CRP (to -1, means none)       
+}
+
 }
