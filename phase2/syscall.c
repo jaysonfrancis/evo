@@ -17,4 +17,9 @@ int GetPid(){
 
 void Sleep(int sec){
 	//??? need to complete the code
+	asm("movl %0, %%ebx,int $49"
+	: //output line for asm()
+	:"g" (sec) //input line for asm()
+	:"ebx" // push/pop before/after asm()
+	);
 }
