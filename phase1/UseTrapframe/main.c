@@ -11,7 +11,7 @@ Instruction --> Idle, UserProc
 IDT --> TimerEntryCode (Begining of the interrupt handling), eventually going to kenerl code
 Inside kernel code, call subroutines, (Interrupt service routine).. Kernels dutie is to load process
 Runtime stack is always being used to do the push and pop. 
-
+*/
 include statements...
 declare kernel data structures...
 (include stuff from timer lab and new PCB described in 1.html)
@@ -31,29 +31,28 @@ InitIDT() is new to code, containing 3 statements from timer lab:
    (but NO "sti")
 
 int main() {
-   call InitData() to initialize kernel data structure
-   call (new) InitIDT() to set up timer (from timer lab)
-   call CreateISR() to create Idle proc. create with 0
-   call Dispatch(pcb[...) to load Idle proc to run pcb[0].TF_ptr
+   //call InitData() to initialize kernel data structure
+   //call (new) InitIDT() to set up timer (from timer lab)
+   //call CreateISR() to create Idle proc. create with 0
+   //call Dispatch(pcb[...) to load Idle proc to run pcb[0].TF_ptr
 
    return 0; // never reaches this.
 } // main ends
 
 void Kernel(TF_t *TF_ptr) {
-   change to kernel mode for CRP - change to kmode
-   save TF_ptr to PCB of CRP 
+   //change to kernel mode for CRP - change to kmode
+   //save TF_ptr to PCB of CRP 
 
-   switch upon intr_num pointed by TF_ptr to call corresponging ISR {
-      if it's TIMER_INTR:
-         call TimerISR()
-      default:
-         PANIC! msg and break into GDB
-   }
+   //switch upon intr_num pointed by TF_ptr to call corresponging ISR {
+      //if it's TIMER_INTR:
+         //call TimerISR()
+      //default:
+         //PANIC! msg and break into GDB
+   
 
 // still handles other keyed-in simulated events
-   (same as PureSimulation to handle key events)
+   //(same as PureSimulation to handle key events)
 
-   call SelectCRP() to select process to run
-   call Dispatch(pcb[CRP].TF_ptr) to load it and run
+   //call SelectCRP() to select process to run
+   //call Dispatch(pcb[CRP].TF_ptr) to load it and run
 }
-
