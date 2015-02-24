@@ -61,7 +61,36 @@ void TimerISR() {
 	  pcb[CRP].total_runtime += pcb[CRP].runtime;//sum up runtime to the total runtime of CRP
 	  pcb[CRP].state=RUN;//change its state to RUN
 	  EnQ(CRP,&run_q);//queue it to run queue
-	  CRP=-1; //reset CRP (to -1, means none)       
+	  CRP=-1; //reset CRP (to -1, means none) 
+
+	//Phase 2
+	sys_time++;
+	chksleepQ();      
 }
+
+void chksleepQ(){
+  int i;
+  for (i=0; i<sizeof(&sleep_q); i++){
+    if (pcb[sleep_q.q[i]].waketime == sys_time){
+	pcb[sleep_q.q[i]].state = RUN;
+        EnQ(sleep_q.q[i], &run_q);
+	}	
+  }
+}
+
+void GetPidISR() { // Phase 2
+  pcb[CRP].TF_ptr = pid; 
+  
+}
+
+void SleepISR() { // Phsae 2
+  int sec = pcb[CRP].TF_ptr->ebx; //
+  pcb[CRP].waketime = (sys_time + (100 * sec));
+  EnQ(CRP, &sleep_q);
+  pcb[CRP].state=SLEEP;
+  CRP=-1;
+}
+
+
 
 }

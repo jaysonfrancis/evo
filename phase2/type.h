@@ -17,6 +17,7 @@ typedef enum {NONE, RUNNING, RUN, SLEEP, WAIT, ZOMBIE} state_t;
 typedef struct {             // PCB describes proc image
    mode_t mode;              // process privilege mode
    state_t state;            // state of process
+   int wake_time;
    int runtime;              // run time since dispatched
    int total_runtime;        // total run time since created
    TF_t *TF_ptr;             // points to TF in stack

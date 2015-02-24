@@ -7,7 +7,7 @@ int GetPid(){ //programed to entry 48 in IDT
 	int pid;
 	
 	//assembly code initialization
-	asm("int $48; movl %%ebx, %0" //CPU inst
+	asm("int $48; movl %%ebx, %0" //CPU inst call intterupt 48 (GETPID_INTR)
 	:"=g" (pid) // output line for asm().
 	:          // no input into asm()
 	:"%ebx");  // push/pop before/after asm()

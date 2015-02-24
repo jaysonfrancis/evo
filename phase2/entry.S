@@ -27,6 +27,14 @@ ENTRY(TimerEntry)
    pushl $TIMER_INTR
    jmp IntoKernel
 
+ENTRY(GetPidEntry)
+   pushl $GETPID_INTR
+   jmp IntoKernel
+
+ENTRY(SleepEntry)
+   pushl $SLEEP_INTR
+   jmp IntoKernel
+
 // Common IRQ entry, save context and call Kmain()
 IntoKernel:
    pusha

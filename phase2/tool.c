@@ -15,6 +15,10 @@ for (i=0; i<size; i++){
  
 }
 
+//void checksleepQ(){
+// Key is to look at the size
+
+
 void EnQ(int pid, q_t *p) {
   
   if (p->size == Q_SIZE) { cons_printf("The q is full"); return; }

@@ -12,19 +12,22 @@
 #include "entry.h"
 #include "TF.h"
 
-int CRP;
-q_t run_q, none_q;
+int CRP, sys_time;
+q_t run_q, none_q, sleep_q;
 pcb_t pcb[MAX_PROC];
 char stack[MAX_PROC][STACK_SIZE];
 struct i386_gate *IDT_ptr;
 
+
 //InitData() still same as PureSimulation
 void InitData(){
    int i;
+   sys_time = 0;
    //initializing 2 queues
    MyBZero(&run_q, sizeof(run_q));
    MyBZero(&none_q, sizeof(none_q));
-   
+   MyBZero(&sleep_q, sizeof(sleep_q)); // Phase 2
+
    for(i=1; i<20; i++){
 	EnQ(i, &none_q);//queue PID's 1-19 into none_q
 	pcb[i].state = NONE; //set state to NONE in all unused PCB[1-19]
@@ -57,6 +60,8 @@ void SetEntry(int entry_num, func_ptr_t func_ptr){
 void InitIDT(){ //InitIDT() is new to code, containing 3 statements from timer lab
   IDT_ptr = get_idt_base(); //locate IDT
   SetEntry(32, TimerEntry);//fill out IDT timer entry, set entry 32
+  SetEntry(48, GetPidEntry); // Added in Phase 2
+  SetEntry(49, SleepEntry); // Added in Phase 2
   outportb(0x21, ~1);//program PIC mask
   //(but NO "sti")
 }
@@ -81,7 +86,11 @@ void Kernel(TF_t *TF_ptr) {
       case TIMER_INTR://if it's TIMER_INTR:
         TimerISR(); //call TimerISR()
 	break;
- 
+      case GETPID_INTR: // Phase 2
+        GetPid();
+	break;
+      case SLEEP_INTR;  // Phase 2
+	Sleep(pcb[CRP].wake_time); // ? 
       default://default:
          cons_printf("Something went wrong"); //PANIC! msg and break into GDB
 	 exit(0);
