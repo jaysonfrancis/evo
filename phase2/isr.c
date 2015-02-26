@@ -79,16 +79,26 @@ void chksleepQ(){
 }
 
 void GetPidISR() { // Phase 2
-  pcb[CRP].TF_ptr = pid; 
+  outportb(0x20, 0x60); // ? 
+  pcb[CRP].TF_ptr->ebx = CRP;
+  GetPid();
+  //pcb[CRP].TF_ptr = pid; 
   
+  //return pcb[CRP].TF_ptr;
+  return;
 }
 
-void SleepISR() { // Phsae 2
-  int sec = pcb[CRP].TF_ptr->ebx; //
+void SleepISR(int sec) { // Phsae 2
+  //int sec;
+  outportb(0x20, 0x60);
+  //sec = pcb[CRP].TF_ptr->ebx; //
+  
   pcb[CRP].waketime = (sys_time + (100 * sec));
+  
   EnQ(CRP, &sleep_q);
   pcb[CRP].state=SLEEP;
   CRP=-1;
+  return;
 }
 
 

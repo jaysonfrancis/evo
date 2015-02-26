@@ -8,5 +8,6 @@ void TerminateISR();
 void TimerISR();
 void GetPidISR(); 
 void checksleepQ();
+void SleepISR(int);
 
 #endif

@@ -1,6 +1,6 @@
 // CpE/CSc159
 // UseTrapframe/main.txt
-// Group name: Evo
+// Group name: Evo.
 // Student Name: Jayson Francis & Aaron Blancaflor
 
 #include "spede.h"
@@ -87,10 +87,12 @@ void Kernel(TF_t *TF_ptr) {
         TimerISR(); //call TimerISR()
 	break;
       case GETPID_INTR: // Phase 2
-        GetPid();
+        //GetPid();
+        GetPidISR();
 	break;
       case SLEEP_INTR;  // Phase 2
-	Sleep(pcb[CRP].wake_time); // ? 
+	//Sleep(pcb[CRP].wake_time); // ? 
+    SleepISR(TF_ptr->ebx);
       default://default:
          cons_printf("Something went wrong"); //PANIC! msg and break into GDB
 	 exit(0);
@@ -99,7 +101,7 @@ void Kernel(TF_t *TF_ptr) {
 
    if (cons_kbhit()){ // if key stoke is detected
       //char key;
-      //int pid;
+      //int pid;;
 	key = cons_getchar(); //determining what key was pressed
 
 	switch(key){

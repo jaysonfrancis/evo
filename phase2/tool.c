@@ -6,12 +6,11 @@
 
 void MyBZero(char *p, int size) {
 
-int i;
-for (i=0; i<size; i++){
-  *p = (char) 0;
-  p++;
- }
-
+  int i;
+  for (i=0; i<size; i++){
+    *p = (char) 0;
+    p++;
+   }
  
 }
 
@@ -22,8 +21,13 @@ for (i=0; i<size; i++){
 void EnQ(int pid, q_t *p) {
   
   if (p->size == Q_SIZE) { cons_printf("The q is full"); return; }
+  else
   p->q[p->tail] = pid;
   p->tail = (p->tail + 1) % Q_SIZE;
+  
+  //new
+  if (p->tail >= Q_SIZE){ p->tail = 0; }
+
   p->size++;
   return;
   
@@ -34,11 +38,15 @@ int DeQ(q_t *p) {
   int pid;
   int tmp;
   
-  if (p->size == 0){ return -1; }
+  if (p->size == 0){ return -1; }else
   tmp = p->q[p->head];
-  p->head = (p->head+1) % Q_SIZE;
+  // New
+  p->head++;
+  if (p->head==Q_SIZE){ p-> head=0; }
+
+  // New - p->head = (p->head+1) % Q_SIZE;
   p->size--;
-  pid = tmp; 
+  //pid = tmp; 
   return pid;
 
 }

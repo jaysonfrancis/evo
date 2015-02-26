@@ -17,11 +17,13 @@ void Idle() {
 }
 
 void UserProc() {
+	int i,x;
 	for(;;){
-		int i; // We added
 		//cons_printf("%d ", CRP); // print its pid (CRP) on PC
-	cons_printf("%d ", GetPid());	
-	Sleep(1);//for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
+		x=GetPiod();
+	cons_printf("%d ", x);
+	i = 4 -(X%4);
+	Sleep(i);//for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
 	}//end infinite loop
 }
 
