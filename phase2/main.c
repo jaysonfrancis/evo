@@ -29,7 +29,6 @@ void InitData(){
    for(i=1; i<20; i++){
 	EnQ(i, &none_q);//queue PID's 1-19 into none_q
 	pcb[i].state = NONE; //set state to NONE in all unused PCB[1-19]
-	EnQ(i, &none_q)
    }//end for loop
    CRP=0;
 
@@ -49,7 +48,7 @@ void SelectCRP(){
 	}
 }
 
-void SetEntry(){
+void SetEntry(int entry_num, func_ptr_t func_ptr){
 	struct i386_gate *gateptr = &IDT_ptr[entry_num];
 	fill_gate(gateptr, (int)func_ptr, get_cs(), ACC_INTR_GATE, 0);
 }
@@ -86,7 +85,7 @@ int main(){
         //GetPid();
       GetPidISR();
       break;
-      case SLEEP_INTR;  // Phase 2
+      case SLEEP_INTR:  // Phase 2
 	       //Sleep(pcb[CRP].wake_time); // ? 
       SleepISR(TF_ptr->ebx);
       default://default:
