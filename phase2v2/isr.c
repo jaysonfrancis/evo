@@ -6,7 +6,7 @@
 #include "tool.h"
 #include "extern.h"
 #include "proc.h"
-#include "syscall.c"
+#include "syscall.h"
 
 int wakeup;
 void CreateISR(int pid) {

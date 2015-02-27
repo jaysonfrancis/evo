@@ -58,7 +58,7 @@ OS_NAME = MyOS
 #       NOTE: Keep the spaces around the equals sign (=) please.
 #	If this changes, run "make depend" to update $OBJECTS.
 #
-SRC = entry.S isr.c main.c proc.c tool.c 
+SRC = entry.S isr.c main.c proc.c syscall.c tool.c 
 
 #
 #  (3) Add any compiler options you want.  They will be passed to gcc386
@@ -277,7 +277,7 @@ help ::
 #  List of object files.
 #### YQYQYQ-MARK-1 ####
 
-OBJECTS =  entry.o isr.o main.o proc.o tool.o
+OBJECTS =  entry.o isr.o main.o proc.o syscall.o tool.o
 
 #### YQYQYQ-STOP-1 ####
 #-------------------------------------
@@ -331,7 +331,7 @@ $(MY_DLI) :	$(OBJECTS) Makefile
 #  Dependencies.
 #### YQYQYQ-MARK-2 ####
 #
-#  Dependencies generated Fri Feb 27 15:29:21 PST 2015 by (spede-mkmf $Revision: 1.2 $/1)
+#  Dependencies generated Fri Feb 27 15:26:13 PST 2015 by (spede-mkmf $Revision: 1.2 $/1)
 #
 
 entry.o: entry.S \
@@ -370,7 +370,7 @@ main.o: main.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/proc_reg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/seg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/asmacros.h \
- main.h isr.h tool.h type.h TF.h proc.h entry.h \
+ type.h TF.h main.h isr.h proc.h tool.h entry.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/pic.h
 proc.o: proc.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/flames.h \
@@ -387,6 +387,7 @@ proc.o: proc.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/seg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/asmacros.h \
  extern.h type.h TF.h proc.h syscall.h
+syscall.o: syscall.c syscall.h
 tool.o: tool.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/flames.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/sys/cdefs.h \
