@@ -2,7 +2,7 @@
 // UseTrapframe/main.txt
 //
 // skeleton of main() for phase 1
-
+//changes to main.txt 2/27
 include statements...
 declare kernel data structures...
 (include stuff from timer lab and new PCB described in 1.html)
