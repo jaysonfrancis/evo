@@ -20,6 +20,6 @@ void UserProc() {
 		x=GetPid();
 		cons_printf("%d ", x);
 		s = 4 -(x%4);
-	  Sleep(s);//for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
+	    Sleep(s);//for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
 	}//end infinite loop
 }

@@ -44,7 +44,7 @@ void SelectCRP(){
 	}else{
 		CRP = DeQ(&run_q);
 		pcb[CRP].mode = UMODE;
-		pcb[CRP].state = RUN;
+		pcb[CRP].state = RUNNING;
 	}
 }
 
@@ -73,10 +73,11 @@ int main(){
    void Kernel(TF_t *TF_ptr){
    	char key;
    	int pid;
-   pcb[CRP].mode = KMODE; //change to kernel mode for CRP - change to kmode
-   //save TF_ptr to PCB of CRP 
-   pcb[CRP].TF_ptr = TF_ptr;
+    pcb[CRP].TF_ptr = TF_ptr;
 
+    pcb[CRP].mode = KMODE; //change to kernel mode for CRP - change to kmode
+    //save TF_ptr to PCB of CRP 
+   
    switch(TF_ptr->intr_num){ 
       case TIMER_INTR://if it's TIMER_INTR:
         TimerISR(); //call TimerISR()
@@ -100,7 +101,7 @@ int main(){
 
 	 switch(key){
 	 	case 'n':
-	 	if(none_q.size==0)cons_printf("No more processes!\n");
+	 	if(none_q.size==0){cons_printf("No more processes!\n");}
 	 	else{
 	 		pid = DeQ(&none_q);
 	 		CreateISR(pid);
@@ -114,8 +115,8 @@ int main(){
 	   break;
 	   case 'q':
 	   exit(0);
-	}//end switch statement 	
-   }//end if some key pressed
+	 }//end switch statement 	
+  }//end if some key pressed
 
    SelectCRP();//call SelectCRP() to select process to run
    Dispatch(pcb[CRP].TF_ptr);//call Dispatch(pcb[CRP].TF_ptr) to load it and run

@@ -3,7 +3,7 @@
 #include "spede.h"
 #include "type.h"
 #include "extern.h"
-
+/*
 void MyBZero(char *p, int size) {
 
   int i;
@@ -13,10 +13,19 @@ void MyBZero(char *p, int size) {
   }
 
 }
+*/
+void MyBZero(q_t *p, int size) {
+  p->size = size;
+  p->head = size;
+  p->tail = size;
+}
 
-//void checksleepQ(){
-// Key is to look at the size
-
+void MyBzero(void *s, int n) {
+  int i;
+  for (i = 0; i < n; i++) {
+  *((char*)s+n) = '\0';
+  }
+}
 
 void EnQ(int pid, q_t *p) {
 

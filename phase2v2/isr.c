@@ -58,13 +58,13 @@ void CreateISR(int pid) {
     void TimerISR() {
      outportb(0x20,0x60);                 // Release
 
-     if (CRP<=0)return;                   // Return if CRP is Idle
-
-     pcb[CRP].runtime++;                  // Increment Runtime
-     sys_time++;                          // Increment Systime
+     pcb[CRP].runtime++;
+     sys_time++;
+     //pcb[CRP].runtime++;                  // Increment Runtime
+     //sys_time++;                          // Increment Systime
 
      chksleepQ();                         // Added method chksleepq()''
-
+     if (CRP<=0)return; // return if CRP is 0
      if(pcb[CRP].runtime == TIME_LIMIT){
 
       pcb[CRP].total_runtime=pcb[CRP].runtime + pcb[CRP].total_runtime;
