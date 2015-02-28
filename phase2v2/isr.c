@@ -9,6 +9,7 @@
 #include "syscall.h"
 
 int wakeup;
+int wp; 
 void CreateISR(int pid) {
 
  if(pid !=0 ){ EnQ(pid,&run_q); }
@@ -57,7 +58,7 @@ void CreateISR(int pid) {
 
     // Added in Phase 2
    void chksleepQ(){
-    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time >= sys_time){ //changed from <= to >=
+    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){ //changed from <= to >=
       wakeup = DeQ(&sleep_q);
       pcb[wakeup].state=RUN;
       EnQ(wakeup,&run_q);
@@ -86,9 +87,10 @@ void CreateISR(int pid) {
   }
 
 // Added in Phase 2
- void SleepISR(int seconds){
-  outportb(0x20,0x60);  
-  pcb[CRP].wake_time=(sys_time + (100*seconds));
+void SleepISR(int seconds){
+  outportb(0x20,0x60);
+  wp= sys_time+(100*seconds);
+  pcb[CRP].wake_time=wp;
   EnQ(CRP,&sleep_q);
   pcb[CRP].state=SLEEP;
   CRP=-1;

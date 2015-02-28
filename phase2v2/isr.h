@@ -7,7 +7,7 @@ void CreateISR(int);
 void TerminateISR();
 void TimerISR();
 void GetPidISR(); 
-void checksleepQ();
+void chksleepQ();
 void SleepISR();
 
 #endif

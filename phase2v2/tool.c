@@ -4,7 +4,7 @@
 #include "type.h"
 #include "extern.h"
 /*
-void MyBZero(char *p, int size) {
+void MyBzero(char *p, int size) {
 
   int i;
   for (i=0; i<size; i++){
@@ -49,7 +49,7 @@ int DeQ(q_t *p) {
   int pid;
 
   
-  if (p->size == 0){ return -1; }else
+  if (p->size == 0){ return -1; } else
   pid=p->q[p->head];
   p->head++;
   
