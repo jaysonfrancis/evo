@@ -24,7 +24,7 @@ void InitData(){
    //initializing 3 queues
 	MyBZero(&run_q, 0);
 	MyBZero(&none_q, 0);
-   MyBZero(&sleep_q, 0); // Phase 2
+	MyBZero(&sleep_q, 0); // Phase 2
 
    for(i=1; i<20; i++){
 	EnQ(i, &none_q);//queue PID's 1-19 into none_q
