@@ -55,6 +55,15 @@ void CreateISR(int pid) {
       return;
     }
 
+    // Added in Phase 2
+   void chksleepQ(){
+    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
+      wakeup = DeQ(&sleep_q);
+      pcb[wakeup].state=RUN;
+      EnQ(wakeup,&run_q);
+    }
+   }
+
     void TimerISR() {
      outportb(0x20,0x60);                 // Release
 
@@ -75,16 +84,6 @@ void CreateISR(int pid) {
 
     }
   }
-
-// Added in Phase 2
-  void chksleepQ(){
-   while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
-     wakeup = DeQ(&sleep_q);
-     pcb[wakeup].state=RUN;
-     EnQ(wakeup,&run_q);
-   }
- }
-
 
 // Added in Phase 2
  void SleepISR(int seconds){
