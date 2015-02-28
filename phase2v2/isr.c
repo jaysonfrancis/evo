@@ -57,7 +57,7 @@ void CreateISR(int pid) {
 
     // Added in Phase 2
    void chksleepQ(){
-    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
+    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time >= sys_time){ //changed from <= to >=
       wakeup = DeQ(&sleep_q);
       pcb[wakeup].state=RUN;
       EnQ(wakeup,&run_q);
