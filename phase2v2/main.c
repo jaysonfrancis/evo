@@ -18,6 +18,12 @@ pcb_t pcb[MAX_PROC];
 char stack[MAX_PROC][STACK_SIZE];
 struct i386_gate *IDT_ptr;
 
+
+void SetEntry(int entry_num, func_ptr_t func_ptr){
+  struct i386_gate *gateptr = &IDT_ptr[entry_num];
+  fill_gate(gateptr, (int)func_ptr, get_cs(), ACC_INTR_GATE, 0);
+}
+
 void InitData(){
 	int i;
 	sys_time = 0;
@@ -48,10 +54,6 @@ void SelectCRP(){
 	}
 }
 
-void SetEntry(int entry_num, func_ptr_t func_ptr){
-	struct i386_gate *gateptr = &IDT_ptr[entry_num];
-	fill_gate(gateptr, (int)func_ptr, get_cs(), ACC_INTR_GATE, 0);
-}
 
 void InitIDT(){
   IDT_ptr = get_idt_base(); //locate IDT
