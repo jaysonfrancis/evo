@@ -7,13 +7,13 @@
 #include "syscall.h" // Added in Phase 2
 
 void Idle() {
-	int i;
+	int x,i;
 	
 	for(;;){
-//		x=GetPid();
+		x=GetPid();
 		cons_printf("0 "); // print 0 ON PC?
-		//Sleep(1);
-		for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
+		Sleep(1);
+		//for (i=0; i<1666000; i++) IO_DELAY(); // busy-loop delay for about 1 sec
 	} //end infinite loop
 	
 }

@@ -3,7 +3,7 @@
 #include "spede.h"
 #include "type.h"
 #include "extern.h"
-/*
+
 void MyBzero(char *p, int size) {
 
   int i;
@@ -11,9 +11,13 @@ void MyBzero(char *p, int size) {
     *p = (char) 0;
     p++;
   }
+  
+  
+  
 
 }
-*/
+
+/*
 void MyBZero(q_t *p, int size) {
   p->size = size;
   p->head = size;
@@ -26,11 +30,12 @@ void MyBzero(void *s, int n) {
   *((char*)s+n) = '\0';
   }
 }
-
+*/
 void EnQ(int pid, q_t *p) {
 
   if (p->size == Q_SIZE) { cons_printf("The q is full"); return; }
   else
+  
     p->q[p->tail] = pid;
     p->tail++;
   

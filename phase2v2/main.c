@@ -28,9 +28,9 @@ void InitData(){
 	int i;
 	sys_time = 0;
    //initializing 3 queues
-	MyBZero(&run_q, 0);
-	MyBZero(&none_q, 0);
-	MyBZero(&sleep_q, 0); // Phase 2
+	MyBzero(&run_q, 0);
+	MyBzero(&none_q, 0);
+	MyBzero(&sleep_q, 0); // Phase 2
 
    for(i=1; i<20; i++){
 	EnQ(i, &none_q);//queue PID's 1-19 into none_q
@@ -91,6 +91,7 @@ int main(){
       case SLEEP_INTR:  // Phase 2
 	       //Sleep(pcb[CRP].wake_time); // ? 
       SleepISR(TF_ptr->ebx);
+      break;
       default://default:
          cons_printf("Something went wrong"); //PANIC! msg and break into GDB
          breakpoint();
@@ -107,8 +108,8 @@ int main(){
 	 	else{
 	 		pid = DeQ(&none_q);
 	 		CreateISR(pid);
-	   }//end else
-	   break;
+	        }//end else
+	   	break;
 	   case 't':
 	   TerminateISR();
 	   break;

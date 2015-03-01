@@ -51,14 +51,14 @@ void CreateISR(int pid) {
 
       outportb(0x20,0x60);                // Release
       pcb[CRP].TF_ptr->ebx = CRP;         
-      GetPid();
+     // GetPid(); //maybe change this back
 
       return;
     }
 
     // Added in Phase 2
    void chksleepQ(){
-    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){ //changed from <= to >=
+    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){ 
       wakeup = DeQ(&sleep_q);
       pcb[wakeup].state=RUN;
       EnQ(wakeup,&run_q);
