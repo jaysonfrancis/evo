@@ -1,32 +1,26 @@
 // proc.c, 159
 // processes are here
+// Team Evo 
 
 #include "spede.h"   // for IO_DELAY() needed here below
+#include "syscall.h"  // Added in Phase 2
 #include "extern.h"  // for current_run_pid needed here below
-#include "proc.h"    // for Idle, SimpleProc, DispatchProc
-#include "syscall.h"
+#include "proc.h"     // for Idle, SimpleProc, DispatchProc
 
 void Idle() {
-   int i;//seconds;
-   for(;;){
-   cons_printf("0");//print 0 on PC
-   //seconds= 4 - (CRP%4);
-   //Sleep(seconds);
-   for(i=0; i<1666000; i++) IO_DELAY();//busy-loop delay for about 1 sec
-   } 
+   int i; 							// Added for seconds 
+	for(;;){ 					// Infinity loop
+		cons_printf("0 ");   // Print 0 ON host PC
+		for(i=0; i<1666000; i++) IO_DELAY();/ /busy-loop delay for about 1 sec
+   }  								// End infinite loop 
 }
 
 void UserProc() {
-  // int i;
-   int seconds;
+   int x;
    for(;;){
-   cons_printf("%d",CRP);//print its pid (CRP) on PC
-   seconds= 4 - (CRP%4);
-   Sleep(seconds);
-   //printf("seconds %d", seconds);
-   // Sleep(seconds);
-   //for(i=0; i<1666000; i++) IO_DELAY();//busy-loop delay for about 1 sec
-   }
-   
+		cons_printf("%d",CRP); 				// Print its PID. GetPid() isn't working here?
+		x = 4 - (CRP%4);						// Calculate proper seconds. Formula taken from 2.html
+		Sleep(x);
+   } // End infinite loop 
 }
  
