@@ -36,7 +36,7 @@ void CreateISR(int pid) {
         	// ??//(need to rotate to next PID in run queue)
         	pcb[CRP].total_runtime += pcb[CRP].runtime;//sum up runtime to the total runtime of CRP
         	pcb[CRP].state=RUN;//change its state to RUN
-          pcb[CRP].runtime = 0;
+          pcb[CRP].runtime = 0; // added this after teacher review
         	EnQ(CRP,&run_q);//queue it to run queue
         	CRP=-1; //reset CRP (to -1, means none)     
 }
