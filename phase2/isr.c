@@ -8,8 +8,8 @@
 #include "proc.h"
 #include "syscall.c"
 
-int wakingID;
-int wake_period;
+int PIDtoWake;
+int wakeLength;
 void CreateISR(int pid) {
    if(pid !=0 ){//if pid given is not 0 (Idle), enqueue it into run queue
       EnQ(pid,&run_q);
@@ -72,10 +72,10 @@ void TimerISR() {
    pcb[CRP].runtime++;
    sys_time++;
    while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
-     //int wakingID;
-     wakingID = DeQ(&sleep_q);
-     pcb[wakingID].state=RUN;
-     EnQ(wakingID,&run_q);
+     //int PIDtoWake;
+     PIDtoWake = DeQ(&sleep_q);
+     pcb[PIDtoWake].state=RUN;
+     EnQ(PIDtoWake,&run_q);
    }
    // just return if CRP is Idle (0) or less (-1)
    if (CRP <= 0  ){
@@ -98,8 +98,8 @@ void TimerISR() {
 
 void SleepISR(int seconds){
   outportb(0x20,0x60);
-  wake_period= sys_time+(100*seconds);
-  pcb[CRP].wake_time=wake_period;
+  wakeLength= sys_time+(100*seconds);
+  pcb[CRP].wake_time=wakeLength;
   EnQ(CRP,&sleep_q);
   pcb[CRP].state=SLEEP;
   CRP=-1;
