@@ -7,7 +7,7 @@
 #include "extern.h"
 
 
-void MyBzero(void *s, int n) {
+void MyBzero(q_t *s, int n) {
 	int i;
 	
 //	for (i = 0; i < n; i++) {
@@ -15,9 +15,9 @@ void MyBzero(void *s, int n) {
 //	}
 	
 
-	for (i=0; i<size; i++){
-    *p = (char) 0;
-    p++;
+	for (i=0; i<n; i++){
+    *s = (char) 0;
+    s++;
    }
    
    

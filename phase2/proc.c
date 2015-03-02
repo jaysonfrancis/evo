@@ -11,7 +11,7 @@ void Idle() {
    int i; 							// Added for seconds 
 	for(;;){ 					// Infinity loop
 		cons_printf("0 ");   // Print 0 ON host PC
-		for(i=0; i<1666000; i++) IO_DELAY();/ /busy-loop delay for about 1 sec
+		for(i=0; i<1666000; i++) IO_DELAY();//busy-loop delay for about 1 sec
    }  								// End infinite loop 
 }
 
