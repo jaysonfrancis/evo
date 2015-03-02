@@ -1,5 +1,5 @@
 // isr.c, 159
-
+// Team Evo
 #include "spede.h"
 #include "type.h"
 #include "isr.h"
@@ -11,9 +11,7 @@
 int wakingID;
 int wake_period;
 void CreateISR(int pid) {
-  // printf("create\n");
    if(pid !=0 ){//if pid given is not 0 (Idle), enqueue it into run queue
-    //   printf("Create recieved a pid : %d \n",pid);
       EnQ(pid,&run_q);
    }
       // PCB of new proc:
@@ -40,11 +38,9 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr->gs = get_gs();
       
    
-//  return 0;
 }
 
 void TerminateISR() {
-  //printf("terminate\n");
    //just return if CRP is 0 or -1 (Idle or not given)
     
     if (CRP <=0 ){
@@ -71,7 +67,6 @@ void GetPidISR(){
 void TimerISR() {
    outportb(0x20,0x60);
    
-  // printf("TimerISR Beggineing CRP %d \n",CRP);
   
    //upcount the runtime of CRP and system time
    pcb[CRP].runtime++;
@@ -84,7 +79,6 @@ void TimerISR() {
    }
    // just return if CRP is Idle (0) or less (-1)
    if (CRP <= 0  ){
-      //printf("TIMER ISR CRP is %d\n", CRP);
       return;
    }
 
