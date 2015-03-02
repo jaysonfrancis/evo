@@ -10,15 +10,15 @@
 void MyBzero(q_t *s, int n) {
 	int i;
 	
-//	for (i = 0; i < n; i++) {
-//	  *((char*)s+n) = '\0';
-//	}
+	for (i = 0; i < n; i++) {
+	  *((char*)s+n) = '\0';
+	}
 	
 
-	for (i=0; i<n; i++){
-    *s = (char) 0;
-    s++;
-   }
+//	for (i=0; i<size; i++){
+ //   *p = (char) 0;
+ //   p++;
+//   }
    
    
 }
