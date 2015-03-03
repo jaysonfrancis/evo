@@ -10,22 +10,6 @@
 
 int wakingID;
 int wake_period;
-/*
-void SemWaitISR(){
-  CRP ebx(semID)
-  if(its count<0) downcount it
-  else
-  queue crp into its wait_q
-  (change state/reset crp to -1)
-}
-
-void sempostISR(){
-  crp ebx is semID
-  if(sem wait_q empty) upcount its count
-  else
-  free first from wait_q(dequeue from wait queue and enqueue into run_q )change its state
-}
-*/
 void CreateISR(int pid) {
   // printf("create\n");
    if(pid !=0 ){//if pid given is not 0 (Idle), enqueue it into run queue
@@ -39,15 +23,18 @@ void CreateISR(int pid) {
       pcb[pid].total_runtime = 0;// both runtime counts are reset to 0
       
       
-      MyBzero(stack[pid], STACK_SIZE); // erase stack
+      MyBZero(stack[pid], STACK_SIZE); // erase stack
       // point to just above stack, then drop by sizeof(TF_t)
       pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
       pcb[pid].TF_ptr--;
       // fill out trapframe of this new proc:
       if(pid == 0)
       pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
-      else
-      pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
+      else if(pid%2 == 0 ){
+        pcb[pid].TF_ptr->eip = (unsigned int) Consumer; 
+      }else if(pid%2 == 1){
+      pcb[pid].TF_ptr->eip = (unsigned int) Producer; // other new process
+      }
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();
       pcb[pid].TF_ptr->ds = get_ds();
@@ -129,10 +116,23 @@ void SleepISR(int seconds){
   
 }
 
-void SemWaitISR(){
-  
+void SemWaitISR(int semaphoreID){
+   
+  if(semaphore[semaphoreID].count > 0){
+    semaphore[semaphoreID].count --;
+  }
+  if(semaphore[semaphoreID].count == 0){
+    EnQ(CRP,&semaphore_q);
+    pcb[CRP].state = WAIT;
+    CRP=-1;
+  }
 }
 
-void SemPostISR(){
-  
+void SemPostISR(int semaphoreID){
+  if(semaphore[semaphoreID].wait_q.size ==0){
+    semaphore[semaphoreID].count ++;
+  }else
+  semaphoreID = DeQ(&semaphore_q);
+  pcb[semaphoreID].state = RUN;
+  EnQ(semaphoreID,&run_q);
 }

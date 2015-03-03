@@ -21,10 +21,17 @@ void Sleep(int sec) {
         :"%ebx");
 }
 
-void SemWait(){
-   
+void SemWait(int semaphoreID){
+  asm("movl %0, %%ebx ;int $49"
+      :
+      :"g" (semaphoreID)
+      :"%ebx");
 }
 
-void SemPost(){
+void SemPost(int semaphoreID){
+   asm("movl %0, %%ebx ;int $49"
+      :
+      :"g" (semaphoreID)
+      :"%ebx");
    
 }

@@ -14,11 +14,12 @@
 
 // kernel data structure:
 int CRP, sys_time;                // current running PID, -1 means no process
-int product_semaphore,product;
-q_t run_q, none_q,sleep_q;      // processes ready to run and not used
+int product_semaphore,product,semaphoreID;
+q_t run_q, none_q,sleep_q,semaphore_q;      // processes ready to run and not used, asleep and semaphores
 pcb_t pcb[MAX_PROC];    // process table
 char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 //(include stuff from timer lab and new PCB described in 1.html)
+semaphore_t semaphore;
 struct i386_gate *IDT_ptr;
 
 void SetEntry(int entry_num, func_ptr_t func_ptr){
@@ -43,15 +44,18 @@ void InitData() {
    int i;
    sys_time = 0;
    
-   MyBZero(&run_q,0);
-   MyBZero(&none_q,0);
-   MyBZero(&sleep_q,0);
+   MyBZero((char *)&run_q,0);
+   MyBZero((char *)&none_q,0);
+   MyBZero((char *)&sleep_q,0);
+   MyBZero((char *)&semaphore_q,0);
    
    for(i = 1 ; i<Q_SIZE;i++){
       pcb[i].state = NONE;
       EnQ(i,&none_q);
-      
+      EnQ(i,&semaphore_q);
    }
+   product = 0;
+   product_semaphore = DeQ(&semaphore_q);
    CRP = 0;
 }
 
