@@ -31,6 +31,15 @@ ENTRY(SleepEntry)
 ENTRY(GetPidEntry)
    pushl $GETPID_INTR
    jmp IntoKernel
+
+//Semaphore entries
+ENTRY(SemWaitEntry)
+   pushl $SEMWAIT_INTR
+   jmp IntoKernel
+
+ENTRY(SemPostEntry)
+   pushl $SEMPOST_INTR
+   jmp IntoKernel   
    
 // push intr type number then jump to common handler
 ENTRY(TimerEntry)

@@ -30,6 +30,13 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
       else
       pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
+      //added phase 3
+      if(pid%2==0){ //if even
+        pcb[pid].TF_ptr->eip = (unsigned int)Producer;
+      }else{ //odd
+        pcb[pid].TF_ptr->eip = (unsigned int)Consumer;
+      }
+      
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();
       pcb[pid].TF_ptr->ds = get_ds();
@@ -105,4 +112,27 @@ void SleepISR(int seconds){
   CRP=-1;
   return;
   
+}
+
+void SemWaitISR(int SemID){
+  if(semaphore[SemID].count >0){
+    semaphore[SemID].count--;
+  }
+  if(semaphore[SemID].count == 0 ){
+    EnQ(CRP,&Semaphore_q);
+    pcb[CRP].state = WAIT;
+    CRP = -1;
+  }
+
+}
+
+void SemPostISR(int SemID){
+  if(semaphore[SemID].wait_q.size == 0){
+    semaphore[SemID].count++;
+  }else{
+    SemID = DeQ(&Semaphore_q);
+    pcb[SemID].state = RUN;
+    EnQ(SemID, &run_q);
+  }
+
 }

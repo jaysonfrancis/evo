@@ -10,8 +10,10 @@
 #include "type.h"       // processes such as Init()
 #include "entry.h"
 
-int CRP, sys_time;                // current running PID, -1 means no process
-q_t run_q, none_q,sleep_q;      // processes ready to run and not used
+int CRP, sys_time,product_semaphore,product;// current running PID, -1 means no process
+// product_semaphore,product only used for testing will delete later
+q_t run_q, none_q,sleep_q,semaphore_q; // processes ready to run and not used
+semaphore_t semaphore[Q_SIZE]; //added in phase 3
 pcb_t pcb[MAX_PROC];    // process table
 char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
@@ -27,6 +29,8 @@ void InitIDT(){
    SetEntry(32,TimerEntry);
    SetEntry(48,GetPidEntry);
    SetEntry(49,SleepEntry);
+   SetEntry(50,SemWaitEntry);
+   SetEntry(51,SemPostEntry);
    outportb(0x21,~1);
 }
 
@@ -39,13 +43,20 @@ void InitData() {
    MyBZero((char *) &run_q,sizeof(run_q));
    MyBZero((char *) &none_q,sizeof(none_q));
    MyBZero((char *) &sleep_q,sizeof(sleep_q));
+   MyBZero((char *) &semaphore_q,sizeof(semaphore_q));
    
    for(i = 1 ; i<Q_SIZE;i++){
       pcb[i].state = NONE;
       EnQ(i,&none_q);
-      
+      EnQ(i,&semaphore_q); // added in phase3
    }
    CRP = 0;
+
+   //DELETE AFTER PHASE 3
+   product_semaphore = DeQ(&semaphore_q); //added in phase 3
+   //semaphore[product_semaphore].count = 1;
+   product=0;
+
 }
 
 void SelectCRP() {       // select which PID to be new CRP
@@ -84,6 +95,7 @@ void Kernel(TF_t *TF_ptr) {
    //call TimerISR() to service timer interrupt as it just occurred
    switch(TF_ptr->intr_num){
       
+
       case TIMER_INTR:
          TimerISR();
          break;
@@ -92,6 +104,12 @@ void Kernel(TF_t *TF_ptr) {
          break;
       case SLEEP_INTR:
          SleepISR(TF_ptr->ebx);
+         break;
+      case SEMPOST_INTR:
+         SemPostISR();
+         break;
+      case SEMWAIT_INTR;
+         SemWaitISR();
          break;
       default:
          cons_printf("Something went wrong\n");
