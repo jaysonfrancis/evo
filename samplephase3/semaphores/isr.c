@@ -10,6 +10,22 @@
 
 int wakingID;
 int wake_period;
+/*
+void SemWaitISR(){
+  CRP ebx(semID)
+  if(its count<0) downcount it
+  else
+  queue crp into its wait_q
+  (change state/reset crp to -1)
+}
+
+void sempostISR(){
+  crp ebx is semID
+  if(sem wait_q empty) upcount its count
+  else
+  free first from wait_q(dequeue from wait queue and enqueue into run_q )change its state
+}
+*/
 void CreateISR(int pid) {
   // printf("create\n");
    if(pid !=0 ){//if pid given is not 0 (Idle), enqueue it into run queue
