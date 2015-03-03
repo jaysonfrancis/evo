@@ -26,7 +26,7 @@ void UserProc() {
 }
  
 void Producer(){
-	 while(1){
+	 for(;;){
       
       // Wait for product semaphore
       cons_printf("\nProc %d is producing ...\n",PID);
@@ -38,7 +38,7 @@ void Producer(){
 } 
 
 void Consumer(){
-	 while(1){
+	 for(;;){
       
       // Wait for product semaphore
       cons_printf("\nProc %d is consuming ...\n",PID);

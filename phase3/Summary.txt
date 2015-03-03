@@ -1,0 +1,82 @@
+Summary.txt, Phase 3 Semaphores
+
+type.h
+   declare a new semaphore type "semaphore_t" that has:
+      an integer used to control access, "count"
+      a PID queue for waiting processes "q_t wait_q"
+
+main.c/extern.h
+   apply the semaphore type to declare an array of semaphores,
+   "semaphore," which has the same size as a PID queue
+
+   a semaphore queue "semaphore_q" to be primed with available
+   semaphores (numbers 1 ~ 19),
+    
+   need for testing (Phase 3 only, after Phase, delete):
+      integers "product_semaphore" and "product"
+
+InitData()
+   empty semaphore queue and fill numbers 1~19 into it
+
+   These are for Phase 3 as testing needs, delete after Phase:
+   1. dequeue semaphore queue to give to product_semaphore
+   2. MyBzero the semaphore allocated
+   3. set the count of the product semaphore to 1
+   4. set the product to 0
+
+InitIDT()
+   fill out IDT for the new entries:
+      SemWaitEntry
+      SemPostEntry
+
+entry.h
+   constants:
+      SEMWAIT_INTR 50
+      SEMPOST_INTR 51
+   prototype:
+      SemWaitEntry
+      SemPostEntry
+
+entry.S
+   code:
+      SemWaitEntry
+      SemPostEntry
+
+syscall.c/.h
+   code:
+      SemWait()
+      SemPost()
+
+Kernel()
+   switch has new cases:
+      SEMWAIT_INTR calls SemWaitISR()
+      SEMPOST_INTR calls SemPostISR()
+
+isr.c/.h
+   code:
+      SemWaitISR()
+      SemPostISR()
+   modify:
+      CreateISR() set EIP to
+         Producer() when given odd-number PID
+         Consumer() when given even-number PID
+      (PID 0 is still for Idle)
+
+proc.c/.h
+   code:
+      Producer()
+         loop:
+            sem-wait product semaphore
+            show msg: "Proc (pid #) is producing... "
+            increment product by 100
+            show msg: "+++ product is now (product #)\n"
+            sem-post product semaphore
+            IO_DELAY() for a second
+      Consumer()
+         loop:
+            sem-wait product semaphore
+            show msg: "Proc (pid #) is consuming... "
+            decrement product by 100
+            show msg: "--- product is now (product #)\n"
+            sem-post product semaphore
+            IO_DELAY() for a second
