@@ -6,7 +6,7 @@
 #include "type.h"
 #include "extern.h"
 
-
+/*
 void MyBzero(q_t *s, int n) {
 	int i;
 	
@@ -20,6 +20,14 @@ void MyBZero(q_t *p, int size) {
 	p->size = size;
 	p->head = size;
 	p->tail = size;
+}
+*/
+
+void MyBZero(char *p, int size) {
+        int i;
+        for (i = 0; i < size;i++){        
+                *((char*)p+size) ='\0';
+        }                          
 }
 
 void EnQ(int pid,  q_t *p) {
