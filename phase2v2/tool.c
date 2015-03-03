@@ -6,32 +6,20 @@
 #include "type.h"
 #include "extern.h"
 
-/*
-void MyBzero(q_t *s, int n) {
-	int i;
-	
-	for (i = 0; i < n; i++) {
-	  *((char*)s+n) = '\0';
-	}
-}
-
-// Edited on Feb 28th @ 11:32PM
-void MyBZero(q_t *p, int size) {
-	p->size = size;
-	p->head = size;
-	p->tail = size;
-}
-*/
-
 void MyBZero(char *p, int size) {
+        while(size--){
+        	*p++ = (char) 0;
+
+        }
+        /*
         int i;
         for (i = 0; i < size;i++){        
                 *((char*)p+size) ='\0';
-        }                          
+        } */                         
 }
 
 void EnQ(int pid,  q_t *p) {
-
+	
 	if (p->size == Q_SIZE){ printf("\nThe queue is full"); return; } // If none available
 	else
 
