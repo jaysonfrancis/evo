@@ -36,9 +36,9 @@ void InitData() {
    int i;
    sys_time = 0;
    //initializing 3 queues
-   MyBZero((char *) run_q,sizeof(run_q));
-   MyBZero((char *) none_q,sizeof(none_q));
-   MyBZero((char *) sleep_q,sizeof(sleep_q));
+   MyBZero((char *) &run_q,sizeof(run_q));
+   MyBZero((char *) &none_q,sizeof(none_q));
+   MyBZero((char *) &sleep_q,sizeof(sleep_q));
    
    for(i = 1 ; i<Q_SIZE;i++){
       pcb[i].state = NONE;
