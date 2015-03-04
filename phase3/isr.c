@@ -119,7 +119,7 @@ void SemWaitISR(int SemID){
     semaphore[SemID].count--;
   }
   if(semaphore[SemID].count == 0 ){
-    EnQ(CRP,&Semaphore_q);
+    EnQ(CRP,&semaphore_q);
     pcb[CRP].state = WAIT;
     CRP = -1;
   }
@@ -130,7 +130,7 @@ void SemPostISR(int SemID){
   if(semaphore[SemID].wait_q.size == 0){
     semaphore[SemID].count++;
   }else{
-    SemID = DeQ(&Semaphore_q);
+    SemID = DeQ(&semaphore_q);
     pcb[SemID].state = RUN;
     EnQ(SemID, &run_q);
   }
