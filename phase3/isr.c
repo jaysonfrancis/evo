@@ -31,9 +31,10 @@ void CreateISR(int pid) {
       else
       pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
       //added phase 3
-      if(pid%2==0){ //if even
+      if(pid%2==0 && pid!=0){ //if even and not idle proc
         pcb[pid].TF_ptr->eip = (unsigned int)Producer;
-      }else{ //odd
+      }
+      if(pid%2!=0 && pid!=0){ //odd and not idle pric
         pcb[pid].TF_ptr->eip = (unsigned int)Consumer;
       }
       
