@@ -106,10 +106,10 @@ void Kernel(TF_t *TF_ptr) {
          SleepISR(TF_ptr->ebx);
          break;
       case SEMPOST_INTR:
-         SemPostISR();
+         SemPostISR(CRP);
          break;
-      case SEMWAIT_INTR;
-         SemWaitISR();
+      case SEMWAIT_INTR:
+         SemWaitISR(CRP);
          break;
       default:
          cons_printf("Something went wrong\n");

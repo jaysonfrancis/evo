@@ -26,25 +26,28 @@ void UserProc() {
 }
  
 void Producer(){
+	int i;
 	 for(;;){
       
       // Wait for product semaphore
-      cons_printf("\nProc %d is producing ...\n",PID);
-      product += 100;
-      cons_printf("\n+++ product is now [%d] \n",PID);
+      cons_printf("\nProc %d is producing ...\n",CRP);
+      product = product+100;
+      cons_printf("\n+++ product is now [%d] \n",product);
       // post product semaphore
       for(i=0; i<1666000; i++) IO_DELAY();
    }
 } 
 
 void Consumer(){
+	int i;
 	 for(;;){
       
       // Wait for product semaphore
-      cons_printf("\nProc %d is consuming ...\n",PID);
-      product -= 100;
-      cons_printf("\n--- product is now [%d] \n",PID);
+      cons_printf("\nProc %d is consuming ...\n",CRP);
+      product = product-100;
+      cons_printf("\n--- product is now [%d] \n",product);
       // post product semaphore
       for(i=0; i<1666000; i++) IO_DELAY();
    }
 }
+
