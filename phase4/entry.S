@@ -1,6 +1,6 @@
 // entry.S, 159
 // entry points of interrupts
-
+// Team Evo
 #include <spede/machine/asmacros.h>
 #include "entry.h"
 
@@ -31,18 +31,19 @@ ENTRY(SleepEntry)
 ENTRY(GetPidEntry)
    pushl $GETPID_INTR
    jmp IntoKernel
+
+//Semaphore entries
+ENTRY(SemWaitEntry)
+   pushl $SEMWAIT_INTR
+   jmp IntoKernel
+
+ENTRY(SemPostEntry)
+   pushl $SEMPOST_INTR
+   jmp IntoKernel   
    
 // push intr type number then jump to common handler
 ENTRY(TimerEntry)
    pushl $TIMER_INTR
-   jmp IntoKernel
-
-//SemWaitEntry
-   pushl $SEMWAIT_INTR
-   jmp Intokernel
-
-//SemPostEntry
-   pushl $SEMPOST_INTR
    jmp IntoKernel
 
 // Common IRQ entry, save context and call Kmain()

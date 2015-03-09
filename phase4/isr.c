@@ -1,5 +1,5 @@
 // isr.c, 159
-
+// Team Evo
 #include "spede.h"
 #include "type.h"
 #include "isr.h"
@@ -8,12 +8,10 @@
 #include "proc.h"
 #include "syscall.h"
 
-int wakingID;
-int wake_period;
+int PIDtoWake;
+int wakeLength;
 void CreateISR(int pid) {
-  // printf("create\n");
    if(pid !=0 ){//if pid given is not 0 (Idle), enqueue it into run queue
-    //   printf("Create recieved a pid : %d \n",pid);
       EnQ(pid,&run_q);
    }
       // PCB of new proc:
@@ -23,18 +21,23 @@ void CreateISR(int pid) {
       pcb[pid].total_runtime = 0;// both runtime counts are reset to 0
       
       
-      MyBZero(stack[pid], STACK_SIZE); // erase stack
+      MyBZero((char *)stack[pid], STACK_SIZE); // erase stack
       // point to just above stack, then drop by sizeof(TF_t)
       pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
       pcb[pid].TF_ptr--;
       // fill out trapframe of this new proc:
       if(pid == 0)
       pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
-      else if(pid%2 == 0 ){
-        pcb[pid].TF_ptr->eip = (unsigned int) Consumer; 
-      }else if(pid%2 == 1){
-      pcb[pid].TF_ptr->eip = (unsigned int) Producer; // other new process
+      else
+      pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
+      //added phase 3
+      if(pid%2==0 && pid!=0){ //if even and not idle proc
+        pcb[pid].TF_ptr->eip = (unsigned int)Consumer;
       }
+      if(pid%2!=0 && pid!=0){ //odd and not idle pric
+        pcb[pid].TF_ptr->eip = (unsigned int)Producer;
+      }
+      
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();
       pcb[pid].TF_ptr->ds = get_ds();
@@ -43,11 +46,9 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr->gs = get_gs();
       
    
-//  return 0;
 }
 
 void TerminateISR() {
-  //printf("terminate\n");
    //just return if CRP is 0 or -1 (Idle or not given)
     
     if (CRP <=0 ){
@@ -63,27 +64,36 @@ void TerminateISR() {
 }    
 
 void GetPidISR(){
-  pcb[CRP].TF_ptr->ebx = CRP;  
+    pcb[CRP].TF_ptr->ebx = CRP;
   return;
 }
 
 void TimerISR() {
    outportb(0x20,0x60);
    
-  // printf("TimerISR Beggineing CRP %d \n",CRP);
   
    //upcount the runtime of CRP and system time
    pcb[CRP].runtime++;
    sys_time++;
-   while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
-     //int wakingID;
-     wakingID = DeQ(&sleep_q);
-     pcb[wakingID].state=RUN;
-     EnQ(wakingID,&run_q);
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+   /*
+     Scanning the sleep queue is not implemented correctly. (-1.5)
+     If sleep_q.size > 1 and pcb[sleep_q.q[sleep_q.head]].wake_time > sys_time,
+     it will exit the while loop without checking if any other pcb's on the 
+     sleep_q should be enqueued onto the run_q. Another pcb on the sleep_q in a 
+     different position then the sleep_q.head position, may have 
+     wake_time <= sys_time.
+    */
+   while(sleep_q.size != 0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
+     //int PIDtoWake;
+     PIDtoWake = DeQ(&sleep_q);
+     pcb[PIDtoWake].state=RUN;
+     EnQ(PIDtoWake,&run_q);
    }
+   ///////////////////////////////////////////////////////////////////////////////////////////
    // just return if CRP is Idle (0) or less (-1)
    if (CRP <= 0  ){
-      //printf("TIMER ISR CRP is %d\n", CRP);
       return;
    }
 
@@ -102,8 +112,9 @@ void TimerISR() {
 
 
 void SleepISR(int seconds){
-  wake_period= sys_time+(100*seconds);
-  pcb[CRP].wake_time=wake_period;
+  outportb(0x20,0x60);
+  wakeLength= sys_time+(100*seconds);
+  pcb[CRP].wake_time=wakeLength;
   EnQ(CRP,&sleep_q);
   pcb[CRP].state=SLEEP;
   CRP=-1;
@@ -111,23 +122,25 @@ void SleepISR(int seconds){
   
 }
 
-void SemWaitISR(int semaphoreID){
-   
-  if(semaphore[semaphoreID].count > 0){
-    semaphore[semaphoreID].count --;
+void SemWaitISR(int SemID){
+  if(semaphore[SemID].count >0){
+    semaphore[SemID].count--;
   }
-  if(semaphore[semaphoreID].count == 0){
+  if(semaphore[SemID].count == 0 ){
     EnQ(CRP,&semaphore_q);
     pcb[CRP].state = WAIT;
-    CRP=-1;
+    CRP = -1;
   }
+
 }
 
-void SemPostISR(int semaphoreID){
-  if(semaphore[semaphoreID].wait_q.size ==0){
-    semaphore[semaphoreID].count ++;
-  }else
-  semaphoreID = DeQ(&semaphore_q);
-  pcb[semaphoreID].state = RUN;
-  EnQ(semaphoreID,&run_q);
+void SemPostISR(int SemID){
+  if(semaphore[SemID].wait_q.size == 0){
+    semaphore[SemID].count++;
+  }else{
+    SemID = DeQ(&semaphore_q);
+    pcb[SemID].state = RUN;
+    EnQ(SemID, &run_q);
+  }
+
 }
