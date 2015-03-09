@@ -19,7 +19,8 @@ void Idle() {
 void UserProc() {
    int x;
    for(;;){
-		cons_printf("%d ",CRP);	// Print its PID. GetPid() isn't working here?
+
+		cons_printf("%d ",GetPid());	// Print its PID. GetPid() isn't working here?
 		x = 4 - (CRP%4);// Calculate proper seconds. Formula taken from 2.html
 		Sleep(x);
    } // End infinite loop 

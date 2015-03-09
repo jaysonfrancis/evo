@@ -21,6 +21,7 @@ void UserProc() {
    int seconds;
    for(;;){
    cons_printf("%d",CRP);//print its pid (CRP) on PC
+   GetPid();
    seconds= 4 - (CRP%4);
    Sleep(seconds);
    //printf("seconds %d", seconds);

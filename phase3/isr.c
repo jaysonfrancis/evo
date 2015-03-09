@@ -6,7 +6,7 @@
 #include "tool.h"
 #include "extern.h"
 #include "proc.h"
-#include "syscall.c"
+#include "syscall.h"
 
 int PIDtoWake;
 int wakeLength;
@@ -64,11 +64,7 @@ void TerminateISR() {
 }    
 
 void GetPidISR(){
-  
-  outportb(0x20,0x60);
-  pcb[CRP].TF_ptr->ebx = CRP;
-  GetPid();
-  
+    pcb[CRP].TF_ptr->ebx = CRP;
   return;
 }
 
