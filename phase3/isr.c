@@ -75,12 +75,23 @@ void TimerISR() {
    //upcount the runtime of CRP and system time
    pcb[CRP].runtime++;
    sys_time++;
-   while(sleep_q.size !=0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+   /*
+     Scanning the sleep queue is not implemented correctly. (-1.5)
+     If sleep_q.size > 1 and pcb[sleep_q.q[sleep_q.head]].wake_time > sys_time,
+     it will exit the while loop without checking if any other pcb's on the 
+     sleep_q should be enqueued onto the run_q. Another pcb on the sleep_q in a 
+     different position then the sleep_q.head position, may have 
+     wake_time <= sys_time.
+    */
+   while(sleep_q.size != 0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
      //int PIDtoWake;
      PIDtoWake = DeQ(&sleep_q);
      pcb[PIDtoWake].state=RUN;
      EnQ(PIDtoWake,&run_q);
    }
+   ///////////////////////////////////////////////////////////////////////////////////////////
    // just return if CRP is Idle (0) or less (-1)
    if (CRP <= 0  ){
       return;
