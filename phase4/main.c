@@ -53,7 +53,7 @@ int SemGet(x){
 void InitData() {
    int i;
    sys_time = 0;
-   //initializing 3 queues
+   //initializing 4 queues
    MyBZero((char *) &run_q,sizeof(run_q));
    MyBZero((char *) &none_q,sizeof(none_q));
    MyBZero((char *) &sleep_q,sizeof(sleep_q));

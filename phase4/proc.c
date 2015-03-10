@@ -52,3 +52,41 @@ void Consumer(){
    }
 }
 
+// PrintDriver Added in Phase 4
+
+void PrintDriver() {
+   int i, code;
+   char str[] = "Hello, my Team is called Evo!\n\0";
+   char *p;
+
+   print_semaphore = SemGet(0); // should it be -1? depends on IRQISR()
+
+// make sure printer's powered up, cable connected, the following
+// statements (until the Sleep call) will reset the printer and the
+// first IRQ 7 will occur
+   outportb(LPT1_BASE+LPT_CONTROL, PC_SLCTIN); // Printer Control, SeLeCT INterrupt
+   code = inportb(LPT1_BASE+LPT_STATUS);
+   for(i=0; i<50; i++) IO_DELAY();             // needs delay
+   outportb(LPT1_BASE+LPT_CONTROL, PC_INIT|PC_SLCTIN|PC_IRQEN); // IRQ ENable
+   Sleep(1);                                   // printer needs time to reset
+
+   while(1) {
+      cons_printf("%d ", GetPid());
+      Sleep(1);
+      if (print_it) { 
+         p = str;
+         while(*p) {
+            outportb(LPT1_BASE+LPT_DATA, *p);
+            code = importb(LPT1_BASE+LPT_CONTROL);
+            outportb(LPT1_BASE+LPT_control, code|PC_STROBE);
+            for(i=0; i<20; i++) IO_DELAY();
+            outportb(LPT1_BASE+LPT_CONTROL, code);
+            SemWait(print_semaphore);
+            p++;
+         } // while (*p)
+      } // if(print_it)
+      print_it = 0;
+   } // while(1)
+
+}
+

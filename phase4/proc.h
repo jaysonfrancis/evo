@@ -8,5 +8,6 @@ void Idle();
 void UserProc();
 void Producer();
 void Consumer();
+void PrintDriver();
 
 #endif
