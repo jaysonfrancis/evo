@@ -9,8 +9,8 @@
 #include "proc.h"       // processes such as Init()
 #include "type.h"       // processes such as Init()
 #include "entry.h"
-
-int CRP, sys_time,product_semaphore,product;// current running PID, -1 means no process
+//added printsemaphore and print it for phase 4
+int CRP, sys_time, print_semaphore, print_it;// current running PID, -1 means no process
 // product_semaphore,product only used for testing will delete later
 q_t run_q, none_q,sleep_q,semaphore_q; // processes ready to run and not used
 semaphore_t semaphore[Q_SIZE]; //added in phase 3
@@ -31,9 +31,23 @@ void InitIDT(){
    SetEntry(49,SleepEntry);
    SetEntry(50,SemWaitEntry);
    SetEntry(51,SemPostEntry);
-   outportb(0x21,~1);
+   SetEntry(SEMGET_INTR, SemGetEntry); //program into entry.S
+   SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
+   outportb(0x21,~129);
 }
+/*
+int SemGet(x){
+   int sid
+   movl %1 ebx
+   int $52
+   movl ecb, %0
+   output:"=g"(sid)
+   input : "g" (x)
+   
 
+   return sid;
+}
+*/
 
 
 void InitData() {
@@ -56,6 +70,7 @@ void InitData() {
    product_semaphore = DeQ(&semaphore_q); //added in phase 3
    //semaphore[product_semaphore].count = 1;
    product=0;
+   print_it = 0;//4
 
 }
 
@@ -111,6 +126,12 @@ void Kernel(TF_t *TF_ptr) {
       case SEMWAIT_INTR:
          SemWaitISR(CRP);
          break;
+      case SEMGET_INTR: //4
+         SemGetISR();
+         break;
+      case IRQ7_INTR: //4
+         IRQ7ISR();
+         break;    
       default:
          cons_printf("Something went wrong\n");
          breakpoint();
@@ -135,6 +156,10 @@ void Kernel(TF_t *TF_ptr) {
          case 'b':                                  
             breakpoint();  
             break;
+         case 'p':
+            print_it =1;
+            //add more stuff
+            break;   
          case 'q':  
             exit(0);                                                 //just do exit(0);
       }// end switch

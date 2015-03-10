@@ -37,7 +37,11 @@ void CreateISR(int pid) {
       if(pid%2!=0 && pid!=0){ //odd and not idle pric
         pcb[pid].TF_ptr->eip = (unsigned int)Producer;
       }
-      
+      //fill out trapframe
+      //if(pid==0){
+        //pcb[pid].TF_ptr
+      //}
+
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();
       pcb[pid].TF_ptr->ds = get_ds();
@@ -110,6 +114,22 @@ void TimerISR() {
 }
 
 
+void ChkSleepQ(){
+  int pid, size
+  size = sleep_q.size
+  while(size--){
+  pid = DeQ(&sleep_q);
+
+  if(pcb[pid].wake_time == sys_time){
+    pcb[pid].state = RUN;
+    EnQ(pid,&run_q);
+  }else{
+   EnQ(pid,&sleep_q);
+  }//end else
+
+  }//end while
+
+}//end ChkSleepQ
 
 void SleepISR(int seconds){
   outportb(0x20,0x60);
@@ -141,6 +161,19 @@ void SemPostISR(int SemID){
     SemID = DeQ(&semaphore_q);
     pcb[SemID].state = RUN;
     EnQ(SemID, &run_q);
+  }
+
+}
+
+void IRQ7ISR(){ //phase 4
+  int pid;
+
+  outportb(0x20,0x67);
+
+  if(semaphore[print_semaphore].wait_q.size >0){
+    pid = DeQ(&semaphore[print_semaphore].wait_q);
+    EnQ(pid, &run_q);
+    pcb[pid].state = RUN;
   }
 
 }

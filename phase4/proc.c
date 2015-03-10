@@ -17,11 +17,11 @@ void Idle() {
 }
 
 void UserProc() {
-   int x;
+   int x,thePID;
+   thePID = GetPid();
+   x = 4 - (CRP%4); // Calculate proper seconds. Formula taken from 2.html
    for(;;){
-
-		cons_printf("%d ",GetPid());	// Print its PID. GetPid() isn't working here?
-		x = 4 - (CRP%4);// Calculate proper seconds. Formula taken from 2.html
+		cons_printf("%d ",thePID);	// Print its PID. GetPid() isn't working here?
 		Sleep(x);
    } // End infinite loop 
 }
