@@ -154,6 +154,19 @@ void SemWaitISR(int SemID){
 
 }
 
+/*
+void SemWaitISR(){
+  int semaphoreID = pcbCRP].TF_ptr-> ebx;
+  if(semaphore[semaphoreID].count > 0)
+    semaphore[semaphoreID].count--;
+  else {
+    EnQ(CRP, &semaphore[semaphoreID].wait_q);
+    pcb[CRP].state = WAIT;
+    CRP = -1;
+  }
+}
+*/
+
 void SemPostISR(int SemID){
   if(semaphore[SemID].wait_q.size == 0){
     semaphore[SemID].count++;
@@ -164,6 +177,22 @@ void SemPostISR(int SemID){
   }
 
 }
+
+/*
+void SemPOSTISR() {
+  int freed_pid, semaphoreID = pcb[CRP].TF_ptr->ebx;
+
+  if(semaphore[semaphoreID].wait_q.size == 0)
+    semaphore[semaphoreID].count++;
+  else{
+    freed_pid = DeQ(&semaphore[semaphoreID].wait_q);
+    EnQ(freed_pid, &run_q);
+    pcb[freed_pid].state = RUN;
+  }
+}
+
+
+*/
 
 void IRQ7ISR(){ //phase 4
   int pid;

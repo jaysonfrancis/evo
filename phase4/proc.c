@@ -39,6 +39,24 @@ void Producer(){
    }
 } 
 
+/* 
+void Producer() {
+   int i, my_pid = GetPid();
+
+   for(;;) {
+     SemWait(product_semaphore);
+
+     cons_printf("Proc %d is producing... ", my_pid);
+     product += 100;
+     cons_printf("+++ product is now %d\n", product);
+
+     SemPost(product_semaphore);
+
+     for(i=0; i<1666000; i++)IO_DELAY();
+   }
+}
+*/
+
 void Consumer(){
 	int i;
 	 for(;;){
@@ -51,6 +69,27 @@ void Consumer(){
       for(i=0; i<1666000; i++) IO_DELAY();
    }
 }
+
+
+/*
+void Consumer(){ 
+  int i, my_pid = GetPid();
+
+  for(;;){
+     SemWait(poduct_semaphore);
+     cons_printf("Proc %d is consuming...", my_pid);
+     product -= 100;
+     cons_printf("--- product is now %d\n", product);
+
+     SemPost(product_semaphore); 
+     
+     for(i=0; i<1666000; i++) IO_DELAY();
+  }
+}
+
+
+
+*/
 
 // PrintDriver Added in Phase 4
 
