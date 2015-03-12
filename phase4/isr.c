@@ -197,12 +197,15 @@ void SemPOSTISR() {
 void IRQ7ISR(){ //phase 4
   int pid;
 
-  outportb(0x20,0x67);
+  outportb(0x20,0x67); // Dismiss IRQ7
 
-  if(semaphore[print_semaphore].wait_q.size >0){
-    pid = DeQ(&semaphore[print_semaphore].wait_q);
-    EnQ(pid, &run_q);
-    pcb[pid].state = RUN;
-  }
+if(semaphore[print_semaphore].wait_q.size == 0)
+  semaphore[print_semaphore].count++;
+else if (semaphore[print_semaphore].wait_q.size != 0) { //Added != zero condition
+   pid = DeQ(&semaphore[print_semaphore].wait_q);
+   EnQ(pid, &run_q);
+   pcb[pid].state = RUN;
+ }
 
 }
+
