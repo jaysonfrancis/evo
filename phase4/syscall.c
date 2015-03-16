@@ -26,15 +26,14 @@ void SemWait(int SemID){
   asm("movl %0, %%eax ;int $50"
     :
     :"g" (SemID)
-    :"ebx"  
-    );
+    :"eax");
 }
 
 void SemPost(int SemID){
   asm ("movl %0, %%eax ;int $51"
     :
     :"g" (SemID)
-    :"ebx");
+    :"eax");
 }
 
 
