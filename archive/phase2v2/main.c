@@ -1,126 +1,127 @@
-// CpE/CSc159
-// UseTrapframe/main.txt
-// Group name: Evo.
-// Student Name: Jayson Francis & Aaron Blancaflor
+// main.c, 159
+//
+// Team Name: Evo (Members: Aaron Blancaflor and Jayson Francis)
 
-#include "spede.h"
-#include "type.h"
-#include "main.h"
-#include "isr.h"
-#include "proc.h"
-#include "tool.h"
+#include "spede.h"      // spede stuff
+#include "main.h"       // main stuff
+#include "isr.h"        // ISR's
+#include "tool.h"       // handy functions
+#include "proc.h"       // processes such as Init()
+#include "type.h"       // processes such as Init()
 #include "entry.h"
-#include "TF.h"
 
-int CRP, sys_time;
-q_t run_q, none_q, sleep_q;
-pcb_t pcb[MAX_PROC];
-char stack[MAX_PROC][STACK_SIZE];
+int CRP, sys_time;                // current running PID, -1 means no process
+q_t run_q, none_q,sleep_q;      // processes ready to run and not used
+pcb_t pcb[MAX_PROC];    // process table
+char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
 
-
 void SetEntry(int entry_num, func_ptr_t func_ptr){
-  struct i386_gate *gateptr = &IDT_ptr[entry_num];
-  fill_gate(gateptr, (int)func_ptr, get_cs(), ACC_INTR_GATE, 0);
+   struct i386_gate *gateptr = &IDT_ptr[entry_num];
+   fill_gate(gateptr,(int)func_ptr,get_cs(),ACC_INTR_GATE,0);
 }
-
-void InitData(){
-	int i;
-	sys_time = 0;
-   //initializing 3 queues
-	MyBzero(&run_q, 0);
-	MyBzero(&none_q, 0);
-	MyBzero(&sleep_q, 0); // Phase 2
-
-   for(i=1; i<20; i++){
-	EnQ(i, &none_q);//queue PID's 1-19 into none_q
-	pcb[i].state = NONE; //set state to NONE in all unused PCB[1-19]
-   }//end for loop
-   CRP=0;
-
-}
-
-void SelectCRP(){
-	if(CRP>0) return;
-
-	if(CRP==0) pcb[CRP].state=RUN;
-
-	if(run_q.size == 0){
-		CRP = 0;
-	}else{
-		CRP = DeQ(&run_q);
-		pcb[CRP].mode = UMODE;
-		pcb[CRP].state = RUNNING;
-	}
-}
-
 
 void InitIDT(){
-  IDT_ptr = get_idt_base(); //locate IDT
-  SetEntry(32, TimerEntry);//fill out IDT timer entry, set entry 32
-  SetEntry(48, GetPidEntry); // Added in Phase 2
-  SetEntry(49, SleepEntry); // Added in Phase 2
-  outportb(0x21, ~1);//program PIC mask
+   IDT_ptr = get_idt_base();//locate IDT
+   cons_printf("IDT is at %u. \n",IDT_ptr);
+   SetEntry(32,TimerEntry);
+   SetEntry(48,GetPidEntry);
+   SetEntry(49,SleepEntry);
+   outportb(0x21,~1);
 }
 
-int main(){
-   InitData(); //call InitData() to initialize kernel data structure
-   CreateISR(0); //call CreateISR() to create Idle proc. create with 0
-   InitIDT();  //call (new) InitIDT() to set up timer (from timer lab)
-   Dispatch(pcb[0].TF_ptr);//call Dispatch(pcb[...) to load Idle proc to run pcb[0].TF_ptr
 
-   	return 0;
+
+void InitData() {
+   int i;
+   sys_time = 0;
+   //initializing 3 queues
+   MyBZero((char *) &run_q,sizeof(run_q));
+   MyBZero((char *) &none_q,sizeof(none_q));
+   MyBZero((char *) &sleep_q,sizeof(sleep_q));
+   
+   for(i = 1 ; i<Q_SIZE;i++){
+      pcb[i].state = NONE;
+      EnQ(i,&none_q);
+      
+   }
+   CRP = 0;
+}
+
+void SelectCRP() {       // select which PID to be new CRP
+   if(CRP > 0){
+      return;
+   }    
+   //if it's' 0 (Idle), change its state in PCB to RUN
+   if(CRP == 0){
+      pcb[0].state = RUN;
    }
 
-   void Kernel(TF_t *TF_ptr){
-   	char key;
-   	int pid;
-    pcb[CRP].TF_ptr = TF_ptr;
-
-    pcb[CRP].mode = KMODE; //change to kernel mode for CRP - change to kmode
-    //save TF_ptr to PCB of CRP 
+   if(run_q.size == 0 ){
+      CRP = 0;
+   }else{  
+      CRP = DeQ(&run_q); 
+      pcb[CRP].mode = UMODE;
+      pcb[CRP].state = RUNNING;
+   }
+}
+int main() {
+   InitData(); 		//call Init Data to initialize kernel data
+   CreateISR(0);	//call CreateISR(0) to create Idle process (PID 0)
+   InitIDT();
+   Dispatch(pcb[0].TF_ptr);    // to dispatch/run CRP
    
-   switch(TF_ptr->intr_num){ 
-      case TIMER_INTR://if it's TIMER_INTR:
-        TimerISR(); //call TimerISR()
-        break;
-      case GETPID_INTR: // Phase 2
-        //GetPid();
-      GetPidISR();
-      break;
-      case SLEEP_INTR:  // Phase 2
-	       //Sleep(pcb[CRP].wake_time); // ? 
-      SleepISR(TF_ptr->ebx);
-      break;
-      default://default:
-         cons_printf("Something went wrong"); //PANIC! msg and break into GDB
+   return 0;
+}
+void Kernel(TF_t *TF_ptr) {
+
+   int pid;
+   char key;
+   
+   pcb[CRP].TF_ptr=TF_ptr;
+   //change state in PCB of CRP to kernel mode
+   pcb[CRP].mode = KMODE;
+   //call TimerISR() to service timer interrupt as it just occurred
+   switch(TF_ptr->intr_num){
+      
+      case TIMER_INTR:
+         TimerISR();
+         break;
+      case GETPID_INTR:
+         GetPidISR();
+         break;
+      case SLEEP_INTR:
+         SleepISR(TF_ptr->ebx);
+         break;
+      default:
+         cons_printf("Something went wrong\n");
          breakpoint();
          break;
-
-   }//end switch
-
-  if (cons_kbhit()){ // if key stoke is detected
-	 key = cons_getchar(); //determining what key was pressed
-
-	 switch(key){
-	 	case 'n':
-	 	if(none_q.size==0){cons_printf("No more processes!\n");}
-	 	else{
-	 		pid = DeQ(&none_q);
-	 		CreateISR(pid);
-	        }//end else
-	   	break;
-	   case 't':
-	   TerminateISR();
-	   break;
-	   case 'b':
-	   breakpoint();
-	   break;
-	   case 'q':
-	   exit(0);
-	 }//end switch statement 	
-  }//end if some key pressed
-
-   SelectCRP();//call SelectCRP() to select process to run
-   Dispatch(pcb[CRP].TF_ptr);//call Dispatch(pcb[CRP].TF_ptr) to load it and run
+   }
+   
+   if (cons_kbhit()) {
+      key = cons_getchar(); // saving key pressed into variable key
+      switch(key) {
+         case 'n':  
+            if (none_q.size == 0){   //nothing in none_q
+               cons_printf("No more process!\n");
+            }else{
+            pid = DeQ(&none_q);   //get 1st PID un-used (dequeue none queue)
+            CreateISR(pid); 
+           
+               
+               
+            } //end else
+            break;
+         case 't': TerminateISR(); break;   
+         case 'b':                                  
+            breakpoint();  
+            break;
+         case 'q':  
+            exit(0);                                                 //just do exit(0);
+      }// end switch
+   }// end if 
+   SelectCRP();    //call SelectCRP() to settle/determine for next CRP
+   Dispatch(pcb[CRP].TF_ptr);
 }
+

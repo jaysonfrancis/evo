@@ -1,6 +1,6 @@
 // entry.S, 159
 // entry points of interrupts
-
+// Team Evo
 #include <spede/machine/asmacros.h>
 #include "entry.h"
 
@@ -22,14 +22,17 @@ ENTRY(Dispatch)
    add $4, %esp         // skip 4 bytes that stored intr_num
    iret
 
+// get pid entry
 ENTRY(SleepEntry)
    pushl $SLEEP_INTR
    jmp IntoKernel
    
+//Sleep Entry
 ENTRY(GetPidEntry)
    pushl $GETPID_INTR
    jmp IntoKernel
    
+// push intr type number then jump to common handler
 ENTRY(TimerEntry)
    pushl $TIMER_INTR
    jmp IntoKernel

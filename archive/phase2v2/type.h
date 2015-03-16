@@ -1,4 +1,5 @@
 // type.h, 159
+// Team Evo
 
 #ifndef _TYPE_H_
 #define _TYPE_H_
@@ -17,10 +18,10 @@ typedef enum {NONE, RUNNING, RUN, SLEEP, WAIT, ZOMBIE} state_t;
 typedef struct {             // PCB describes proc image
    mode_t mode;              // process privilege mode
    state_t state;            // state of process
-   int wake_time;
    int runtime;              // run time since dispatched
    int total_runtime;        // total run time since created
    TF_t *TF_ptr;             // points to TF in stack
+   int wake_time;            // amount of time to wait before wait
 } pcb_t;
 
 typedef struct {             // proc queue type
