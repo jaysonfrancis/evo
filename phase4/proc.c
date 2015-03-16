@@ -20,7 +20,7 @@ void Idle() {
 }
 
 void UserProc() {
-   int x,thePID;
+   int thePID;
 
    // Added in the loop. ? thePID = GetPid();
    //x = 4 - (CRP%4); // Calculate proper seconds. Formula taken from 2.html
@@ -65,7 +65,7 @@ void PrintDriver() {
             outportb(LPT1_BASE+LPT_DATA, *p);
             code = importb(LPT1_BASE+LPT_CONTROL);
             
-            outportb(LPT1_BASE+LPT_control, code|PC_STROBE);
+            outportb(LPT1_BASE+LPT_CONTROL, code|PC_STROBE);
             
             for(i=0; i<20; i++) IO_DELAY();
             
@@ -74,8 +74,8 @@ void PrintDriver() {
             SemWait(print_semaphore);
             
             p++;
-         //} // while (*p)
-       // if(print_it)
+        } // while (*p)
+       }// if(print_it)
       print_it = 0;
    } // while(1)
   }

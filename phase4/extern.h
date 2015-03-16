@@ -12,4 +12,7 @@ extern semaphore_t semaphore[MAX_PROC];
 extern char stack[MAX_PROC][STACK_SIZE]; // proc run-time stacks
 extern SemID;
 
+extern int print_it;
+
+
 #endif
