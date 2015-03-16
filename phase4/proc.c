@@ -55,7 +55,7 @@ void PrintDriver() {
    Sleep(1);                                   // printer needs time to reset
 
    while(1) {
-      thePID = GetPID();
+      thePID = GetPid();
 
       cons_printf("%d ", thePID);
       Sleep(1);
