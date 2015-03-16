@@ -75,7 +75,7 @@ void PrintDriver() {
             
             p++;
         } // while (*p)
-       // if(print_it)
+       }// if(print_it)
       print_it = 0;
    } // while(1)
   }
