@@ -4,10 +4,10 @@
 #ifndef _PROC_H_
 #define _PROC_H_
 
+int print_semaphore
+
 void Idle();
 void UserProc();
-void Producer();
-void Consumer();
 void PrintDriver();
 
 #endif
