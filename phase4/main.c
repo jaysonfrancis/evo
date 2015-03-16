@@ -124,7 +124,7 @@ void Kernel(TF_t *TF_ptr) {
       case SEMGET_INTR: //4
          pcb[CRP].TF_ptr->ebx = SemGetISR(pcb[CRP].TF_ptr->eax);
          //or
-         //SemGetISR(pcb[CRP].TF_ptr->ebx);
+        // SemGetISR(pcb[CRP].TF_ptr->ebx);
          break;
       case IRQ7_INTR: //4
          IRQ7ISR();
