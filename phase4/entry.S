@@ -40,7 +40,15 @@ ENTRY(SemWaitEntry)
 ENTRY(SemPostEntry)
    pushl $SEMPOST_INTR
    jmp IntoKernel   
+
+ENTRY(SemGetEntry)
+   pushl $SEMGET_INTR
+   jmp IntoKernel   
    
+ENTRY(IRQ7Entry)
+   pushl $IRQ7_INTR
+   jmp IntoKernel
+      
 // push intr type number then jump to common handler
 ENTRY(TimerEntry)
    pushl $TIMER_INTR
