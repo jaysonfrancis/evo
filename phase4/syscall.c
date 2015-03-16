@@ -4,47 +4,43 @@
 
 #include "syscall.h" // prototype these below
 
-int GetPid(void) {
- int pid;
+int GetPid() {
+   int pid;
 
-   asm("int $48; movl %%ebx, %0" // CPU inst
-       : "=g"  (pid)             // 1 output from asm() 
-       :                         // no input into asm()
-       : "%ebx");                // push/pop before/after asm()
-   
+   asm("int $48; movl %%ebx, %0" 
+       : "=g"  (pid)             
+       :                         
+       : "%ebx");              
+    
    return pid;
- }
-
- void Sleep(int sec) {
-  asm("movl %0, %%eax ;int $49"
-    :
-    :"g" (sec)
-    :"eax");
 }
 
-void SemWait(int SemID){
-  asm("movl %0, %%eax ;int $50"
-    :
-    :"g" (SemID)
-    :"eax");
+void Sleep(int sec) {
+    asm("movl %0, %%ebx ;int $49"
+        :
+        :"g" (sec)
+        :"%ebx");
 }
 
-void SemPost(int SemID){
-  asm ("movl %0, %%eax ;int $51"
-    :
-    :"g" (SemID)
-    :"eax");
+void SemWait(int semaphoreID){
+   asm("movl %0, %%ebx ;int $50"
+      :
+      :"g" (semaphoreID)
+      :"%ebx");
 }
 
+void SemPost(int semaphoreID){
+   asm("movl %0, %%ebx ;int $51"
+      :
+      :"g" (semaphoreID)
+      :"%ebx");
+}
 
-int SemGet(int count){
-  int semaphore_id;
-
-  asm("movl %1, %%eax; int $52; movl %%ebx, %0"
-    : "=g" (semaphore_id)
+int SemGet(int count) {
+  int semaphore_ID;
+  asm("movl %1,%%ebx ; int $52; movl %%ecx, %0;" 
+    : "=g" (semaphore_ID) 
     : "g" (count)
-    : "ebx", "eax");
-
-  return semaphore_id;
-
+    : "%ebx", "%ecx" ); 
+  return sempahore_ID;
 }
