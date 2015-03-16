@@ -4,7 +4,9 @@
 
 #include "spede.h"
 #include "type.h"
+#include "tool.h"
 #include "extern.h"
+
 
 void MyBZero(char *p, int size) {
         while(size--){
