@@ -143,61 +143,71 @@ void SleepISR(int seconds){
 }
 
 void SemWaitISR(int SemID){
-  if(semaphore[SemID].count >0){
+  /*if(semaphore[SemID].count >0){
     semaphore[SemID].count--;
   }
   if(semaphore[SemID].count == 0 ){
     EnQ(CRP,&semaphore_q);
     pcb[CRP].state = WAIT;
     CRP = -1;
-  }
+  }*/
+  if(SemID < Q_SIZE){
+    if(semaphore[SemID].count > 0){
+      semaphore[SemID].count--;
+    }else{
+      EnQ(CRP,&(semaphore[SemID].wait_q));
+      pcb[CRP].state = WAIT;
+      CRP = -1;
+    }//end else
+  }//end if if(SemID < Q_SIZE)
 
-}
+} // end SemWaitISR
 
-/*
-void SemWaitISR(){
-  int semaphoreID = pcbCRP].TF_ptr-> ebx;
-  if(semaphore[semaphoreID].count > 0)
-    semaphore[semaphoreID].count--;
-  else {
-    EnQ(CRP, &semaphore[semaphoreID].wait_q);
-    pcb[CRP].state = WAIT;
-    CRP = -1;
-  }
-}
-*/
 
 void SemPostISR(int SemID){
-  if(semaphore[SemID].wait_q.size == 0){
+  /*if(semaphore[SemID].wait_q.size == 0){
     semaphore[SemID].count++;
   }else{
     SemID = DeQ(&semaphore_q);
     pcb[SemID].state = RUN;
     EnQ(SemID, &run_q);
-  }
+  }*/
+
+  int pid_DeQ;
+
+  if(SemID < Q_SIZE){
+    pid_DeQ = DeQ(&(semaphore[SemID].wait_q));
+
+    if(pid_DeQ == -1){
+      semaphore[SemID].count++;
+    }else{
+      pcb[pid_DeQ].state = RUN;
+      EnQ(pid_DeQ,&run_q);
+    }
+  }  //end if(semaphoreID < Q_SIZE)
 
 }
 
-/*
-void SemPOSTISR() {
-  int freed_pid, semaphoreID = pcb[CRP].TF_ptr->ebx;
+int SemGetISR(int count){
+  int SemID;
 
-  if(semaphore[semaphoreID].wait_q.size == 0)
-    semaphore[semaphoreID].count++;
-  else{
-    freed_pid = DeQ(&semaphore[semaphoreID].wait_q);
-    EnQ(freed_pid, &run_q);
-    pcb[freed_pid].state = RUN;
-  }
+  SemID = DeQ(&semaphore_q);
+
+  if(SemID >= 0){
+    MyBZero((char *) &semaphore[SemID], sizeof(semaphore_t));
+    semaphore[SemID].count = count;
+  } // end if(SemID >=0)
+
+  return SemID;
 }
-
-
-*/
 
 void IRQ7ISR(){ //phase 4
-  int pid;
-
   outportb(0x20,0x67); // Dismiss IRQ7
+  if(print_semaphore >= 0){
+    SemPostISR(print_semaphore);
+  }
+  /*
+  int pid;
 
 if(semaphore[print_semaphore].wait_q.size == 0)
   semaphore[print_semaphore].count++;
@@ -206,6 +216,6 @@ else if (semaphore[print_semaphore].wait_q.size != 0) { //Added != zero conditio
    EnQ(pid, &run_q);
    pcb[pid].state = RUN;
  }
-
+*/
 }
 

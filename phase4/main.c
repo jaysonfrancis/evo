@@ -31,7 +31,7 @@ void InitIDT(){
    SetEntry(49,SleepEntry);
    SetEntry(50,SemWaitEntry);
    SetEntry(51,SemPostEntry);
-   SetEntry(SEMGET_INTR, SemGetEntry); //program into entry.S
+   SetEntry(52, SemGetEntry); //program into entry.S
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
    outportb(0x21,~129);
 }
@@ -65,11 +65,6 @@ void InitData() {
       EnQ(i,&semaphore_q); // added in phase3
    }
    CRP = 0;
-
-   //DELETE AFTER PHASE 3
-   product_semaphore = DeQ(&semaphore_q); //added in phase 3
-   //semaphore[product_semaphore].count = 1;
-   product=0;
    print_it = 0;//4
 
 }
@@ -127,7 +122,9 @@ void Kernel(TF_t *TF_ptr) {
          SemWaitISR(CRP);
          break;
       case SEMGET_INTR: //4
-         SemGetISR();
+         pcb[CRP].TF_ptr->ebx = SemGetISR(pcb[CRP].TF_ptr->eax);
+         //or
+         //SemGetISR(pcb[CRP].TF_ptr->ebx);
          break;
       case IRQ7_INTR: //4
          IRQ7ISR();
@@ -158,7 +155,6 @@ void Kernel(TF_t *TF_ptr) {
             break;
          case 'p':
             print_it =1;
-            //add more stuff
             break;   
          case 'q':  
             exit(0);                                                 //just do exit(0);

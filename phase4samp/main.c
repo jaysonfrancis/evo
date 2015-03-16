@@ -147,6 +147,7 @@ static void InitData(void)
    //to NONE
    for (i = 1; i < MAX_PROC; i++)
    {
+      pcb[i].state = NONE;
       EnQ(i, &none_q);
       EnQ(i, &semaphore_q);
 
