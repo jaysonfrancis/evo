@@ -331,7 +331,7 @@ $(MY_DLI) :	$(OBJECTS) Makefile
 #  Dependencies.
 #### YQYQYQ-MARK-2 ####
 #
-#  Dependencies generated Sun Mar 15 18:40:38 PDT 2015 by (spede-mkmf $Revision: 1.2 $/1)
+#  Dependencies generated Wed Mar  4 16:03:02 PST 2015 by (spede-mkmf $Revision: 1.2 $/1)
 #
 
 entry.o: entry.S \
@@ -350,13 +350,12 @@ isr.o: isr.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdio.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdarg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/assert.h \
- /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/parallel.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/io.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stddef.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/proc_reg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/seg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/asmacros.h \
- type.h TF.h isr.h tool.h extern.h proc.h syscall.h
+ type.h TF.h isr.h tool.h extern.h proc.h syscall.c syscall.h
 main.o: main.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/flames.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/sys/cdefs.h \
@@ -366,7 +365,6 @@ main.o: main.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdio.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdarg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/assert.h \
- /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/parallel.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/io.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stddef.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/proc_reg.h \
@@ -383,13 +381,12 @@ proc.o: proc.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdio.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdarg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/assert.h \
- /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/parallel.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/io.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stddef.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/proc_reg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/seg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/asmacros.h \
- syscall.h tool.h type.h TF.h extern.h proc.h
+ syscall.h extern.h type.h TF.h proc.h
 tool.o: tool.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/flames.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/sys/cdefs.h \
@@ -399,13 +396,12 @@ tool.o: tool.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdio.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdarg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/assert.h \
- /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/parallel.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/io.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stddef.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/proc_reg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/seg.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/asmacros.h \
- type.h TF.h tool.h extern.h
+ type.h TF.h extern.h
 
 #### YQYQYQ-STOP-2 ####
 

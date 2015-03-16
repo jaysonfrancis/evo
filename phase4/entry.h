@@ -30,7 +30,8 @@ extern void GetPidEntry();    // code for entry getpid
 extern void SleepEntry();
 extern void SemWaitEntry();
 extern void SemPostEntry();
-
+extern void SemGetEntry();
+extern void IRQ7Entry();
 __END_DECLS
 
 #endif

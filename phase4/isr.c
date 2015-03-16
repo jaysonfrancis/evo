@@ -30,13 +30,6 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
       else
       pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
-      //added phase 3
-      if(pid%2==0 && pid!=0){ //if even and not idle proc
-        pcb[pid].TF_ptr->eip = (unsigned int)Consumer;
-      }
-      if(pid%2!=0 && pid!=0){ //odd and not idle pric
-        pcb[pid].TF_ptr->eip = (unsigned int)Producer;
-      }
       //fill out trapframe
       //if(pid==0){
         //pcb[pid].TF_ptr
@@ -115,8 +108,8 @@ void TimerISR() {
 
 
 void ChkSleepQ(){
-  int pid, size
-  size = sleep_q.size
+  int pid, size;
+  size = sleep_q.size;
   while(size--){
   pid = DeQ(&sleep_q);
 
