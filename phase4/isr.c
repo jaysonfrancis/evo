@@ -188,6 +188,7 @@ int SemGetISR(int count){
 
   if(SemID >= 0){
     MyBZero((char *) &semaphore[SemID], sizeof(semaphore_t));
+
     semaphore[SemID].count = count;
   } // end if(SemID >=0)
 
