@@ -37,10 +37,10 @@ void SemPost(int semaphoreID){
 }
 
 int SemGet(int count) {
-  int semaphore_ID;
-  asm("movl %1,%%ebx ; int $52; movl %%ecx, %0;" 
-    : "=g" (semaphore_ID) 
+  int SemID;
+  asm("movl %1,%%eax ; int $52; movl %%ebx, %0;" 
+    : "=g" (SemID) 
     : "g" (count)
-    : "%ebx", "%ecx" ); 
-  return sempahore_ID;
+    : "%eax", "%ebx" ); 
+  return SemID;
 }

@@ -26,10 +26,11 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
       pcb[pid].TF_ptr--;
       // fill out trapframe of this new proc:
-      if(pid == 0)
+      if(pid == 0){
       pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
-      else
-      pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
+      }
+      if(pid==1) pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver; // other new process
+      if(pid!=1 && pid !=0) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
       //fill out trapframe
       //if(pid==0){
         //pcb[pid].TF_ptr
@@ -82,6 +83,7 @@ void TimerISR() {
      different position then the sleep_q.head position, may have 
      wake_time <= sys_time.
     */
+
    while(sleep_q.size != 0 && pcb[sleep_q.q[sleep_q.head]].wake_time <= sys_time){
      //int PIDtoWake;
      PIDtoWake = DeQ(&sleep_q);
@@ -136,14 +138,6 @@ void SleepISR(int seconds){
 }
 
 void SemWaitISR(int SemID){
-  /*if(semaphore[SemID].count >0){
-    semaphore[SemID].count--;
-  }
-  if(semaphore[SemID].count == 0 ){
-    EnQ(CRP,&semaphore_q);
-    pcb[CRP].state = WAIT;
-    CRP = -1;
-  }*/
   if(SemID < Q_SIZE){
     if(semaphore[SemID].count > 0){
       semaphore[SemID].count--;
@@ -158,13 +152,6 @@ void SemWaitISR(int SemID){
 
 
 void SemPostISR(int SemID){
-  /*if(semaphore[SemID].wait_q.size == 0){
-    semaphore[SemID].count++;
-  }else{
-    SemID = DeQ(&semaphore_q);
-    pcb[SemID].state = RUN;
-    EnQ(SemID, &run_q);
-  }*/
 
   int pid_DeQ;
 

@@ -10,7 +10,7 @@
 #include "type.h"       // processes such as Init()
 #include "entry.h"
 //added printsemaphore and print it for phase 4
-int CRP, sys_time, print_it;// current running PID, -1 means no process
+int CRP, sys_time, print_it,print_semaphore;// current running PID, -1 means no process
 // product_semaphore,product only used for testing will delete later
 q_t run_q, none_q,sleep_q,semaphore_q; // processes ready to run and not used
 semaphore_t semaphore[Q_SIZE]; //added in phase 3
@@ -82,9 +82,10 @@ void SelectCRP() {       // select which PID to be new CRP
       CRP = 0;
    }else{  
       CRP = DeQ(&run_q); 
+   }
       pcb[CRP].mode = UMODE;
       pcb[CRP].state = RUNNING;
-   }
+   
 }
 int main() {
    InitData(); 		//call Init Data to initialize kernel data

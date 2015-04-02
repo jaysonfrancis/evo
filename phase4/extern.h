@@ -5,7 +5,7 @@
 
 #include "type.h"            // q_t, pcb_t, MAX_PROC, STACK_SIZE
 
-extern int CRP,sys_time,product_semaphore,product;              // PID of currently-running process, -1 means none
+extern int CRP,sys_time,product_semaphore,product, print_semaphore;              // PID of currently-running process, -1 means none
 extern q_t run_q, none_q,sleep_q,semaphore_q;    // ready to run, not used proc IDs
 extern pcb_t pcb[MAX_PROC];  // process table
 extern semaphore_t semaphore[MAX_PROC];
