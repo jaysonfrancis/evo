@@ -32,22 +32,12 @@ void InitIDT(){
    SetEntry(50,SemWaitEntry);
    SetEntry(51,SemPostEntry);
    SetEntry(52, SemGetEntry); //program into entry.S
+   SetEntry(53,MSGSNDEntry);
+   SetEntry(54,MSGRCVEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
    outportb(0x21,~129);
 }
-/*
-int SemGet(x){
-   int sid
-   movl %1 ebx
-   int $52
-   movl ecb, %0
-   output:"=g"(sid)
-   input : "g" (x)
-   
 
-   return sid;
-}
-*/
 
 
 void InitData() {
@@ -127,6 +117,12 @@ void Kernel(TF_t *TF_ptr) {
          //or
         // SemGetISR(pcb[CRP].TF_ptr->ebx);
          break;
+      case MSGRCV_INTR:
+         MsgRcvISR(); //pass something into it?
+         break;
+      case MSGSND_INTR:
+         MsnSndISR(); //pass something into it?
+         break;
       case IRQ7_INTR: //4
          IRQ7ISR();
          break;    
@@ -135,7 +131,7 @@ void Kernel(TF_t *TF_ptr) {
          breakpoint();
          break;
    }
-   
+   /*
    if (cons_kbhit()) {
       key = cons_getchar(); // saving key pressed into variable key
       switch(key) {
@@ -160,7 +156,8 @@ void Kernel(TF_t *TF_ptr) {
          case 'q':  
             exit(0);                                                 //just do exit(0);
       }// end switch
-   }// end if 
+   }// end if
+   */ 
    SelectCRP();    //call SelectCRP() to settle/determine for next CRP
    Dispatch(pcb[CRP].TF_ptr);
 }
