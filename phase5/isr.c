@@ -183,21 +183,16 @@ int SemGetISR(int count){
   return SemID;
 }
 
+void MsgSndISR(){};
+
+void MsgRcvISR(){};
+
 void IRQ7ISR(){ //phase 4
   outportb(0x20,0x67); // Dismiss IRQ7
   if(print_semaphore >= 0){
     SemPostISR(print_semaphore);
   }
-  /*
-  int pid;
 
-if(semaphore[print_semaphore].wait_q.size == 0)
-  semaphore[print_semaphore].count++;
-else if (semaphore[print_semaphore].wait_q.size != 0) { //Added != zero condition
-   pid = DeQ(&semaphore[print_semaphore].wait_q);
-   EnQ(pid, &run_q);
-   pcb[pid].state = RUN;
- }
-*/
+
 }
 
