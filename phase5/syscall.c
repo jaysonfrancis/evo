@@ -44,3 +44,8 @@ int SemGet(int count) {
     : "%eax", "%ebx" ); 
   return SemID;
 }
+
+// They both pass the argument as integer (typecast) to the kernel
+void MsgSnd(){ }
+
+void MsgRcv(){ }

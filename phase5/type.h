@@ -36,4 +36,28 @@ typedef struct{
 
 typedef void (* func_ptr_t)(); // void-returning function pointer type
 
+// Added in Phase 5 (message passing)
+
+typedef struct {
+   int sender,                // Sender
+       recipient,             // Recipient
+       time_stamp;            // Time sent
+   char data[101];            // Data bytes
+} msg_t
+
+typedef struct {
+   msg_t msg[Q_SIZE];
+   int hed, tail, size;
+} msg_q_t;
+
+typedef struct {
+   msg_q_t msg_q;
+   q_t wait_q;
+} mbox_t;
+
+
+
+
+
+
 #endif _TYPE_H_
