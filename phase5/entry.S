@@ -54,6 +54,15 @@ ENTRY(TimerEntry)
    pushl $TIMER_INTR
    jmp IntoKernel
 
+ENTRY(MSGSNDEntry)
+   pushl $MSGSND_INTR
+   jmp IntoKernel
+
+ENTRY(MSGRCVEntry)
+   pushl $MSGRCV_INTR
+   jmp IntoKernel
+
+
 // Common IRQ entry, save context and call Kmain()
 IntoKernel:
    pusha

@@ -18,6 +18,8 @@ pcb_t pcb[MAX_PROC];    // process table
 char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
 
+mbox_t mbox[NUM_PROC]; // Mailbox ID is the Process ID
+
 void SetEntry(int entry_num, func_ptr_t func_ptr){
    struct i386_gate *gateptr = &IDT_ptr[entry_num];
    fill_gate(gateptr,(int)func_ptr,get_cs(),ACC_INTR_GATE,0);
@@ -31,7 +33,7 @@ void InitIDT(){
    SetEntry(49,SleepEntry);
    SetEntry(50,SemWaitEntry);
    SetEntry(51,SemPostEntry);
-   SetEntry(52, SemGetEntry); //program into entry.S
+   SetEntry(52,SemGetEntry); //program into entry.S
    SetEntry(53,MSGSNDEntry);
    SetEntry(54,MSGRCVEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S

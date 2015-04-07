@@ -55,8 +55,10 @@ void PrintDriver() {
 
    while(1) {
       thePID = GetPid();
-
       cons_printf("%d ", thePID);
+
+      //p = msg.data;
+
       Sleep(1);
       if (print_it) { 
          p = str;
@@ -78,6 +80,32 @@ void PrintDriver() {
       print_it = 0;
    } // while(1)
   }
+
+
+
+
+void Init(){
+  
+  char str[] ="Hello, Evo team for 159\n";
+  msg_t msg;
+  MyStrcpy(msg,str);
+
+  while(1){
+    show my PID and sleep for 1 second ...
+
+    for(i=0; i<1666000; i++) IO_DELAY();
+    if (cons_kbhit()){
+      key = cons_getchar();
+      switch(key){
+        case 'b': breakpoint();
+        case 'q': exit();
+        case 'p':
+            call MsgSend(addr of msg)
+            break;
+      }
+    }
+  }
+}
 
 
 

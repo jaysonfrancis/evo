@@ -47,7 +47,7 @@ typedef struct {
 
 typedef struct {
    msg_t msg[Q_SIZE];
-   int hed, tail, size;
+   int head, tail, size;
 } msg_q_t;
 
 typedef struct {

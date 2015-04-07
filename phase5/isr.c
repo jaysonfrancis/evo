@@ -22,15 +22,16 @@ void CreateISR(int pid) {
       
       
       MyBZero((char *)stack[pid], STACK_SIZE); // erase stack
+
       // point to just above stack, then drop by sizeof(TF_t)
       pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
       pcb[pid].TF_ptr--;
       // fill out trapframe of this new proc:
-      if(pid == 0){
-      pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
-      }
+      if(pid==0) pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
       if(pid==2) pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver; // other new process
       if(pid==1) pcb[pid].TF_ptr->eip = (unsigned int)Init;
+
+      // Userproc not used for phase5
       if(pid!=1 && pid !=0 && pid != 2) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
       //fill out trapframe
       //if(pid==0){
@@ -183,9 +184,29 @@ int SemGetISR(int count){
   return SemID;
 }
 
-void MsgSndISR(){};
+void MsgSndISR(){
+  //notes from class
+  //mailbox ID is where to find wait_q
+  // Trapframe of the crp... TF-->ebx
+  msg.reciptent = x;
+  msg_ptr=TF->ebx
+  int mid = *msg_ptr -> reciptent
+  if (mbox[mid].wait_q.size == 0) MsgEnq(msg_ptr, &mbox[mid].msg_q);
 
-void MsgRcvISR(){};
+  else (waiter){
+    realse it from wait q;
+    msg_ptr = pcb.TF.ptr->ebx = msg;
+  }
+
+}
+
+void MsgRcvISR(){}
+
+
+
+
+
+
 
 void IRQ7ISR(){ //phase 4
   outportb(0x20,0x67); // Dismiss IRQ7
