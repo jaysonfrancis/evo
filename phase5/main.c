@@ -96,8 +96,7 @@ void Kernel(TF_t *TF_ptr) {
    //change state in PCB of CRP to kernel mode
    pcb[CRP].mode = KMODE;
    //call TimerISR() to service timer interrupt as it just occurred
-   switch(TF_ptr->intr_num){
-      
+   switch(TF_ptr->intr_num){ 
 
       case TIMER_INTR:
          TimerISR();
