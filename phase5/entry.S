@@ -54,11 +54,11 @@ ENTRY(TimerEntry)
    pushl $TIMER_INTR
    jmp IntoKernel
 
-ENTRY(MSGSNDEntry)
+ENTRY(MsgSndEntry)
    pushl $MSGSND_INTR
    jmp IntoKernel
 
-ENTRY(MSGRCVEntry)
+ENTRY(MsgRcvEntry)
    pushl $MSGRCV_INTR
    jmp IntoKernel
 
