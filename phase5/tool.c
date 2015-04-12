@@ -4,7 +4,7 @@
 
 #include "spede.h"
 #include "type.h"
-#include "tool.h"
+//#include "tool.h"
 #include "extern.h"
 
 

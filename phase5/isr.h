@@ -7,12 +7,11 @@ void CreateISR(int);
 void TerminateISR();
 void TimerISR();
 void GetPidISR();
-void SleepISR();
-void SemWaitISR(int);
-void SemPostISR(int);
-int SemGetISR(int);
+void SleepISR(int);
+void SemWaitISR();
+void SemPostISR();
+int SemGetISR();
 void MsgSndISR();
 void MsgRcvISR();
-void IRQ7ISR(void);
-
+void IRQ7ISR(v);
 #endif
