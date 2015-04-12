@@ -81,7 +81,7 @@ void Init(){
   MyStrcpy(msg.data, str);
 
   while(1){
-    cons_printf(" %2x ", GetPid());
+    cons_printf(" %d ", GetPid());
     Sleep(1);
 
     if (cons_kbhit()){
