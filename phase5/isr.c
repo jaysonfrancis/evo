@@ -200,12 +200,6 @@ void MsgSndISR(){
 
 }
 
-void MsgRcvISR(){}
-
-
-
-
-
 
 
 void IRQ7ISR(){ //phase 4
