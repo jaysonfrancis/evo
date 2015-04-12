@@ -88,7 +88,7 @@ void Init(){
     if (cons_kbhit()){
       key = cons_getchar();
       switch(key){
-        case 'b': breakpoint();
+        case 'b': breakpoint(); break;
         case 'q': exit(0);
         case 'p':
             MsgSnd(&msg);

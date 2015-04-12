@@ -11,6 +11,8 @@ void SleepISR();
 void SemWaitISR(int);
 void SemPostISR(int);
 int SemGetISR(int);
+void MsgSndISR();
+void MsgRcvISR();
 void IRQ7ISR(void);
 
 #endif

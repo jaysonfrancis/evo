@@ -185,18 +185,39 @@ int SemGetISR(int count){
 }
 
 void MsgSndISR(){
-  //notes from class
-  //mailbox ID is where to find wait_q
-  // Trapframe of the crp... TF-->ebx
-  msg.reciptent = x;
-  msg_ptr=TF->ebx;
-  int mid = *msg_ptr -> reciptent;
-  if (mbox[mid].wait_q.size == 0) MsgEnq(msg_ptr, &mbox[mid].msg_q);
-
-  else (waiter){
-    //realse it from wait q;
-    msg_ptr = pcb.TF.ptr->ebx = msg;
+  
+  msg_t *src, *dest;
+  int msg;
+  source = (msg_t *)pcb[CRP].TF_ptr->ebx;
+  msg = src -> recipient;
+  
+  if ((mbox[msg].wait_q).size == 0){
+    
+    src->sender = CRP;
+    src->time_stamp = sys_time;
+    MsgEnQ(src, &mbox[msg].msg_q);
+  }else{
+    int tmp_pid = DeQ(&(mbox[msg].wait_q));
+    EnQ(tmp_pid, &run_q);
+    
+    dest = (msg_t *)pcb[tmp_pid].TF_ptr->ebx;
+    memcpy((char*)dest,(char*)src, sizeof(msg_t));
   }
+
+  void MsgRcvISR(){
+  
+  msg_t *temp;
+  int pid;
+  if(mbox[CRP].msg_q.size == 0){
+    EnQ(CRP, &mbox[CRP].wait_q);
+  pcb[CRP].state = WAIT;
+  CRP=-1;
+  }else{
+
+    temp = MsgDeQ(&mbox[CRP].msg_q);
+    (msg_t *)pcb[pid].TF_ptr->ebx = temp;
+  }
+}
 
 }
 

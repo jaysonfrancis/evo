@@ -13,11 +13,7 @@ void MyBZero(char *p, int size) {
           *p++ = (char) 0;
 
         }
-        /*
-        int i;
-        for (i = 0; i < size;i++){        
-                *((char*)p+size) ='\0';
-        } */                         
+                        
 }
 
 void EnQ(int pid,  q_t *p) {

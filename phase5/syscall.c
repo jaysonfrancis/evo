@@ -54,9 +54,7 @@ void MsgSnd(nmg_t *p){
     :"ebx" );
 }
 
-// : "=g" ((msg_t *p))
-// ebx is integer... :"g" ((int)p)
-//
+
 
 
 void MsgRcv(msg_t *p){ 

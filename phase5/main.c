@@ -9,6 +9,7 @@
 #include "proc.h"       // processes such as Init()
 #include "type.h"       // processes such as Init()
 #include "entry.h"
+#include "TF.h"
 //added printsemaphore and print it for phase 4
 int CRP, sys_time, print_it,print_semaphore;// current running PID, -1 means no process
 // product_semaphore,product only used for testing will delete later

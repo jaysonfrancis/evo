@@ -33,6 +33,8 @@ extern void SleepEntry();
 extern void SemWaitEntry();
 extern void SemPostEntry();
 extern void SemGetEntry();
+extern void MsgSndEntry();
+extern void MsgRcvEntry();
 extern void IRQ7Entry();
 __END_DECLS
 
