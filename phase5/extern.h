@@ -10,7 +10,7 @@ extern q_t run_q, none_q,sleep_q,semaphore_q;    // ready to run, not used proc 
 extern pcb_t pcb[MAX_PROC];  // process table
 extern semaphore_t semaphore[MAX_PROC];
 extern char stack[MAX_PROC][STACK_SIZE]; // proc run-time stacks
-extern mbox_t mbox[NUM_PROC];
+extern mbox_t mbox[MAX_PROC];
 extern SemID;
 
 extern int print_it;

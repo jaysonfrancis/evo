@@ -188,7 +188,7 @@ void MsgSndISR(){
   
   msg_t *src, *dest;
   int msg;
-  source = (msg_t *)pcb[CRP].TF_ptr->ebx;
+  src = (msg_t *)pcb[CRP].TF_ptr->ebx;
   msg = src -> recipient;
   
   if ((mbox[msg].wait_q).size == 0){
@@ -203,6 +203,7 @@ void MsgSndISR(){
     dest = (msg_t *)pcb[tmp_pid].TF_ptr->ebx;
     memcpy((char*)dest,(char*)src, sizeof(msg_t));
   }
+}
 
   void MsgRcvISR(){
   
@@ -219,7 +220,7 @@ void MsgSndISR(){
   }
 }
 
-}
+
 
 
 

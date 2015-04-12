@@ -9,7 +9,8 @@
 #include "proc.h"       // processes such as Init()
 #include "type.h"       // processes such as Init()
 #include "entry.h"
-#include "TF.h"
+
+
 //added printsemaphore and print it for phase 4
 int CRP, sys_time, print_it,print_semaphore;// current running PID, -1 means no process
 // product_semaphore,product only used for testing will delete later
@@ -19,7 +20,7 @@ pcb_t pcb[MAX_PROC];    // process table
 char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
 
-mbox_t mbox[NUM_PROC]; // Mailbox ID is the Process ID
+mbox_t mbox[MAX_PROC]; // Mailbox ID is the Process ID
 
 void SetEntry(int entry_num, func_ptr_t func_ptr){
    struct i386_gate *gateptr = &IDT_ptr[entry_num];
@@ -35,8 +36,8 @@ void InitIDT(){
    SetEntry(50,SemWaitEntry);
    SetEntry(51,SemPostEntry);
    SetEntry(52,SemGetEntry); //program into entry.S
-   SetEntry(53,MSGSNDEntry);
-   SetEntry(54,MSGRCVEntry);
+   SetEntry(MSGSND_INTR,MsgSndEntry);
+   SetEntry(MSGRCV_INTR,MsgRcvEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
    outportb(0x21,~129);
 }
@@ -123,7 +124,7 @@ void Kernel(TF_t *TF_ptr) {
          MsgRcvISR(); //pass something into it?
          break;
       case MSGSND_INTR:
-         MsnSndISR(); //pass something into it?
+         MsgSndISR(); //pass something into it?
          break;
       case IRQ7_INTR: //4
          IRQ7ISR();

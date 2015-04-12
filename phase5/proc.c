@@ -8,7 +8,6 @@
 #include "extern.h"  // for current_run_pid needed here below
 #include "proc.h"     // for Idle, SimpleProc, DispatchProc
 
-
 void Idle() {
    int i;// Added for seconds 
   for(;;){// Infinity loop

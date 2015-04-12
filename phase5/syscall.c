@@ -47,7 +47,7 @@ int SemGet(int count) {
 
 // They both pass the argument as integer (typecast) to the kernel
 // Could be wrong.
-void MsgSnd(nmg_t *p){ 
+void MsgSnd(msg_t *p){ 
   asm("movl %0, %%ebx; int 53"
     :
     :"g" ((int)p)
