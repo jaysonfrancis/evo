@@ -9,7 +9,7 @@
 #include "proc.h"       // processes such as Init()
 #include "type.h"       // processes such as Init()
 #include "entry.h"
-
+#include "TF.h"
 
 //added printsemaphore and print it for phase 4
 int CRP, sys_time, print_it,print_semaphore;// current running PID, -1 means no process
@@ -82,8 +82,13 @@ void SelectCRP() {       // select which PID to be new CRP
    
 }
 int main() {
+   int i,j;
    InitData();       //call Init Data to initialize kernel data
    CreateISR(0);  //call CreateISR(0) to create Idle process (PID 0)
+   i=DeQ(&none_q);
+   CreateISR(i);
+   j=DeQ(&none_q);
+   CreateISR(i);
    InitIDT();
    Dispatch(pcb[0].TF_ptr);    // to dispatch/run CRP
    
