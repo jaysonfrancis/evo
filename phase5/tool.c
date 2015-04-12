@@ -51,49 +51,54 @@ int DeQ(q_t *p) {
 
 
 void MsgEnQ(msg_t *p, msg_q_t *q) {
-   if msg queue q points to is already full {
-      cons_printf("Msg queue is already full\n");
-      return
-   }
-   copy what p points to to the msg_q_t that q points to,
-   (into the msg array of what q points to, at the slot
-   indexed by the tail)
+	if (q->size == Q_SIZE){
+		cons_printf("Msg queue is already full!\n");
+		return;
+	}
+	q->msg[q->tail]=*p;
+	q->size++;
+	q->tail++;
 
-   increment the tail (using q to get to this as well)
-   check if it wraps
-   increment the size (using q to get to this as well)
+	if(q->tail == Q_SIZE){
+		q->tail = 0;
+	}
+
 }
 
 
-msg_t *MsgDeQ(msg_q_t *p) {
-   if msg queue p points to is empty {
-      cons_printf("Msg queue is empty\n");
-      return 0 (typical null value)
-   }
 
-   the addr of the 1st in the msg array that p points to
-   should be the return (put this addr into a separate local
-   msg_t pointer first)
-   
-   decrement the head (using p to get to this as well)
-   check if it wraps
-   decrement the size (using p to get to this as well)
-   
-   return that local pointer (of the 1st in msg array p pointed)
+msg_t *MsgDeQ(msg_q_t *p) {
+
+	//separate local pointer
+	msg_t *localmsg;
+
+   if (p->size == 0){
+      cons_printf("Msg queue is empty\n");
+      return '\0';
+   }
+   localmsg = p->msg;
+   p->head--;
+   if(p->head == Q_SIZE){
+   		p->head = 0;
+   }
+   p->size--;
+   return localmsg;
+
 }
 
 
 // assuming src str null-terminated, dest str has space large enough
 void MyStrcpy(char *dest, char *src) { // destination 1st, then source
+	while (*src){
+		*dest = *src;
+		src++;
+		dest++;
+	}
+	*dest='\0';
 
-   while, byte by byte, what src points to is not NULL {
-      copy character src points to to where dest points to
-      advance src (to point to next byte)
-      advance dest (to point to next byte)
-   }
-
-   add NULL to where dest points to
 }
+
+
 
 
 

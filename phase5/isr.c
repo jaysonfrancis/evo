@@ -172,7 +172,7 @@ void SemPostISR(int SemID){
 
 int SemGetISR(int count){
   int SemID;
-
+2
   SemID = DeQ(&semaphore_q);
 
   if(SemID >= 0){
