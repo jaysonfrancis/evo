@@ -37,6 +37,7 @@ void UserProc() {
 
 void PrintDriver() {
    int i, code, thePID;
+   msg_t my_msg;
    char str[] = "Hello, my Team is called Evo!\n\0";
    char *p;
 
@@ -48,7 +49,6 @@ void PrintDriver() {
 
    outportb((LPT1_BASE+LPT_CONTROL), PC_SLCTIN); // Printer Control, SeLeCT INterrupt
    code = inportb(LPT1_BASE+LPT_STATUS);
-
    for(i=0; i<50; i++) IO_DELAY();             // needs delay
    outportb(LPT1_BASE+LPT_CONTROL, PC_INIT|PC_SLCTIN|PC_IRQEN); // IRQ ENable
    Sleep(1);                                   // printer needs time to reset
@@ -57,50 +57,44 @@ void PrintDriver() {
       thePID = GetPid();
       cons_printf("%d ", thePID);
 
-      //p = msg.data;
-
-      Sleep(1);
-      if (print_it) { 
-         p = str;
-         while(*p) {
-            outportb(LPT1_BASE+LPT_DATA, *p);
+      MsgRcv(&my_msg);
+      p = my_msg.data;
+      while (*p){
+          outportb(LPT1_BASE+LPT_DATA, *p);
             code = importb(LPT1_BASE+LPT_CONTROL);
-            
             outportb(LPT1_BASE+LPT_CONTROL, code|PC_STROBE);
-            
             for(i=0; i<20; i++) IO_DELAY();
-            
             outportb(LPT1_BASE+LPT_CONTROL, code);
-            
             SemWait(print_semaphore);
-            
             p++;
-        } // while (*p)
-       }// if(print_it)
-      print_it = 0;
-   } // while(1)
+    }
+   } 
   }
 
 
 
 
 void Init(){
-  
+  int key;
   char str[] ="Hello, Evo team for 159\n";
   msg_t msg;
-  MyStrcpy(msg,str);
+  msg.recipient =2;
+  MyStrcpy(msg.data, str);
 
   while(1){
-    show my PID and sleep for 1 second ...
+    cons_printf(" %2x ", GetPid());
+    Sleep(1);
 
-    for(i=0; i<1666000; i++) IO_DELAY();
     if (cons_kbhit()){
       key = cons_getchar();
       switch(key){
         case 'b': breakpoint();
-        case 'q': exit();
+        case 'q': exit(0);
         case 'p':
-            call MsgSend(addr of msg)
+            MsgSnd(&msg);
+            break;
+        default:
+            cons_printf("Error - No command\n");
             break;
       }
     }
