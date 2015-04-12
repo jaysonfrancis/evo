@@ -43,7 +43,7 @@ typedef struct {
        recipient,             // Recipient
        time_stamp;            // Time sent
    char data[101];            // Data bytes
-} msg_t
+} msg_t;
 
 typedef struct {
    msg_t msg[Q_SIZE];

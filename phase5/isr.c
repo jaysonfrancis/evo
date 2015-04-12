@@ -172,7 +172,7 @@ void SemPostISR(int SemID){
 
 int SemGetISR(int count){
   int SemID;
-2
+
   SemID = DeQ(&semaphore_q);
 
   if(SemID >= 0){
@@ -189,12 +189,12 @@ void MsgSndISR(){
   //mailbox ID is where to find wait_q
   // Trapframe of the crp... TF-->ebx
   msg.reciptent = x;
-  msg_ptr=TF->ebx
-  int mid = *msg_ptr -> reciptent
+  msg_ptr=TF->ebx;
+  int mid = *msg_ptr -> reciptent;
   if (mbox[mid].wait_q.size == 0) MsgEnq(msg_ptr, &mbox[mid].msg_q);
 
   else (waiter){
-    realse it from wait q;
+    //realse it from wait q;
     msg_ptr = pcb.TF.ptr->ebx = msg;
   }
 
