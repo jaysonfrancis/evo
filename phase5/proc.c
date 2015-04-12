@@ -11,10 +11,10 @@
 
 void Idle() {
    int i;// Added for seconds 
-	for(;;){// Infinity loop
-		cons_printf("0 ");   // Print 0 ON host PC
-		//Sleep(1);
-		for(i=0; i<1666000; i++) IO_DELAY();//busy-loop delay for about 1 sec
+  for(;;){// Infinity loop
+    cons_printf("0 ");   // Print 0 ON host PC
+    //Sleep(1);
+    for(i=0; i<1666000; i++) IO_DELAY();//busy-loop delay for about 1 sec
    }// End infinite loop 
 }
 
@@ -26,8 +26,8 @@ void UserProc() {
    
    for(;;){
     thePID = GetPid(); 
-		cons_printf("%d ", thePID);	// Print its PID. GetPid() isn't working here?
-		Sleep(4 - thePID%4);
+    cons_printf("%d ", thePID); // Print its PID. GetPid() isn't working here?
+    Sleep(4 - thePID%4);
    
    } // End infinite loop 
 }
