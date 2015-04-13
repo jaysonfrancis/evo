@@ -3,7 +3,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#include "type.h"
+//#include "type.h"
 
 int main();
 void InitData();
