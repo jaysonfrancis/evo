@@ -3,6 +3,7 @@
 //Team Evo
 
 #include "syscall.h" // prototype these below
+#include "type.h"
 
 int GetPid() {
    int pid;
@@ -30,7 +31,7 @@ void SemWait(int semaphoreID){
 }
 
 void SemPost(int semaphoreID){
-   asm("movl %0, %%ebx ;int $51"
+   asm("movl %0, %%ebx ; int $51"
       :
       :"g" (semaphoreID)
       :"%ebx");
@@ -38,10 +39,10 @@ void SemPost(int semaphoreID){
 
 int SemGet(int count) {
   int SemID;
-  asm("movl %1,%%eax ; int $52; movl %%ebx, %0;" 
+  asm("movl %1,%%ebx ; int $52; movl %%ecx, %0;" 
     : "=g" (SemID) 
     : "g" (count)
-    : "%eax", "%ebx" ); 
+    : "%ebx", "%ecx" ); 
   return SemID;
 }
 

@@ -90,7 +90,6 @@ void PrintDriver() {
       // if (print_it == 1 ){//(set by Kernel() when key polled is 'p') {
       p = my_msg.data;
       while (*p){//what p points to is not 0 {
-
          // code sending the character to the port (see above)
          outportb(LPT1_BASE+LPT_DATA, *p);      // send char to data reg
          code = inportb(LPT1_BASE+LPT_CONTROL); // read control reg
@@ -114,6 +113,7 @@ void Init(){
    char str[]= "Hello, my team is called PotatoOS!\nIt's time to bake potato!\n\0";
    msg.recipient = 2;
    MyStrCpy(msg.data, str);
+   
    while(1){ 
       cons_printf("%d", GetPid());
       Sleep(1);
