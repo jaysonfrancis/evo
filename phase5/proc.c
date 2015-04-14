@@ -37,7 +37,7 @@ void UserProc() {
 void PrintDriver() {
    int i, code, thePID;
    msg_t my_msg;
-   char str[] = "Hello, my Team is called Evo!\n\0";
+  // char str[] = "Hello, my Team is called Evo!\n\0";
    char *p;
 
    print_semaphore = SemGet(-1); // should it be -1? depends on IRQISR()
@@ -60,7 +60,7 @@ void PrintDriver() {
       p = my_msg.data;
       while (*p){
           outportb(LPT1_BASE+LPT_DATA, *p);
-            code = importb(LPT1_BASE+LPT_CONTROL);
+            code = inportb(LPT1_BASE+LPT_CONTROL);
             outportb(LPT1_BASE+LPT_CONTROL, code|PC_STROBE);
             for(i=0; i<20; i++) IO_DELAY();
             outportb(LPT1_BASE+LPT_CONTROL, code);
