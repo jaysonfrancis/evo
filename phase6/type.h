@@ -55,6 +55,7 @@ typedef struct {
    q_t wait_q;
 } mbox_t;
 
+<<<<<<< HEAD
 // Added in Phase 6 (Bidirectional Device Driver)
 
 typedef struct {
@@ -68,6 +69,8 @@ typedef struct {
 } terminal_t
 
 
+=======
+>>>>>>> origin/master
 
 
 

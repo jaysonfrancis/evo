@@ -62,10 +62,13 @@ ENTRY(MsgRcvEntry)
    pushl $MSGRCV_INTR
    jmp IntoKernel
 
+<<<<<<< HEAD
 ENTRY(IRQ3Entry)
    pushl $IRQ3_INTR
    jmp IntoKernel
 
+=======
+>>>>>>> origin/master
 
 // Common IRQ entry, save context and call Kmain()
 IntoKernel:

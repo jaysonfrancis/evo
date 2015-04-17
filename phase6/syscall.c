@@ -56,6 +56,11 @@ void MsgSnd(msg_t *p){
 }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/master
 void MsgRcv(msg_t *p){ 
   asm("movl %0, %%ebx ; int $54"
     :

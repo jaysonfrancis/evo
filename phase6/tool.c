@@ -94,11 +94,14 @@ void MyStrcpy(char *dest, char *src) { // destination 1st, then source
 }
 
 
+<<<<<<< HEAD
 int MyStrcmp(char *, char *){}
 
 int MyStrlen(char *){}
 
 
+=======
+>>>>>>> origin/master
 
 
 

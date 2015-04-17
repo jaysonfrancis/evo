@@ -9,7 +9,10 @@
 #include <spede/stdio.h> // printf(), sprintf(), vprintf(), sscanf(), etc.
 #include <spede/assert.h> // assert()
 #include <spede/machine/parallel.h> // Added in Phase 4
+<<<<<<< HEAD
 #include <spede/machine/rs232.h> // Added in Phase 6 - Serial port constants
+=======
+>>>>>>> origin/master
 
 #include <spede/machine/io.h> // inportb(), outportb(), inportw(), etc.
 #include <spede/machine/proc_reg.h> // get_idt_base(), get_cs(), set_cr3(), etc

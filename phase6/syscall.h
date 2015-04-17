@@ -11,6 +11,9 @@ void SemPost(int SemID);
 int SemGet(int count);
 void MsgSnd(msg_t *p);
 void MsgRcv(msg_t *p);
+<<<<<<< HEAD
 void TipIRQ3();
+=======
+>>>>>>> origin/master
 
 #endif
