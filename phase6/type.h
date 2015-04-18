@@ -55,7 +55,7 @@ typedef struct {
    q_t wait_q;
 } mbox_t;
 
-<<<<<<< HEAD
+
 // Added in Phase 6 (Bidirectional Device Driver)
 
 typedef struct {
@@ -67,13 +67,5 @@ typedef struct {
       echo,   // echo back to terminal or not (typing)
       TX_extra; // if 1, TXRDY event occured but echo_q and TX_q were empty
 } terminal_t
-
-
-=======
->>>>>>> origin/master
-
-
-
-
 
 #endif _TYPE_H_

@@ -14,10 +14,9 @@
 #define SEMGET_INTR 52
 #define MSGSND_INTR 53
 #define MSGRCV_INTR 54
-<<<<<<< HEAD
+
 #define IRQ3_INTR 35
-=======
->>>>>>> origin/master
+
 
 #define KCODE 0x08    // kernel's code segment
 #define KDATA 0x10    // kernel's data segment

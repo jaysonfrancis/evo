@@ -96,8 +96,7 @@ int main() {
 }
 void Kernel(TF_t *TF_ptr) {
 
- //  int pid;
- //  char key;
+
    
    pcb[CRP].TF_ptr=TF_ptr;
    //change state in PCB of CRP to kernel mode
@@ -122,8 +121,7 @@ void Kernel(TF_t *TF_ptr) {
          break;
       case SEMGET_INTR: //4
          pcb[CRP].TF_ptr->ebx = SemGetISR(pcb[CRP].TF_ptr->eax);
-         //or
-        // SemGetISR(pcb[CRP].TF_ptr->ebx);
+
          break;
       case MSGRCV_INTR:
          MsgRcvISR(); //pass something into it?
@@ -139,33 +137,7 @@ void Kernel(TF_t *TF_ptr) {
          breakpoint();
          break;
    }
-   /*
-   if (cons_kbhit()) {
-      key = cons_getchar(); // saving key pressed into variable key
-      switch(key) {
-         case 'n':  
-            if (none_q.size == 0){   //nothing in none_q
-               cons_printf("No more process!\n");
-            }else{
-            pid = DeQ(&none_q);   //get 1st PID un-used (dequeue none queue)
-            CreateISR(pid); 
-           
-               
-               
-            } //end else
-            break;
-         case 't': TerminateISR(); break;   
-         case 'b':                                  
-            breakpoint();  
-            break;
-         case 'p':
-            print_it =1;
-            break;   
-         case 'q':  
-            exit(0);                                                 //just do exit(0);
-      }// end switch
-   }// end if
-   */ 
+ 
    SelectCRP();    //call SelectCRP() to settle/determine for next CRP
    Dispatch(pcb[CRP].TF_ptr);
 }
