@@ -199,7 +199,7 @@ void MsgSndISR(){
   }else{
     int tmp_pid = DeQ(&(mbox[msg].wait_q));
     EnQ(tmp_pid, &run_q);
-    
+    pcb[tmp_pid].state = RUN;
     dest = (msg_t *)pcb[tmp_pid].TF_ptr->ebx;
     memcpy((char*)dest,(char*)src, sizeof(msg_t));
   }
@@ -216,7 +216,7 @@ void MsgSndISR(){
   }else{
 
     temp = MsgDeQ(&mbox[CRP].msg_q);
-    (msg_t *)pcb[pid].TF_ptr->ebx = temp;
+    *((msg_t *)pcb[pid].TF_ptr->ebx) = *temp;
   }
 }
 

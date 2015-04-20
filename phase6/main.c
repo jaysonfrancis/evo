@@ -88,7 +88,7 @@ int main() {
    i=DeQ(&none_q);
    CreateISR(i);
    j=DeQ(&none_q);
-   CreateISR(i);
+   CreateISR(j);
    InitIDT();
    Dispatch(pcb[0].TF_ptr);    // to dispatch/run CRP
    
