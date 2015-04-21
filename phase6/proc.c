@@ -100,5 +100,26 @@ void Init(){
   }
 }
 
+void shell(){ //phase 6
+
+  /*
+  shell code goes here
+  */
+}
+
+/*
+STDIN(){
+  
+}
+
+STDOUT(){
+  
+}
+
+FileMgr(){
+  
+}
+*/
+
 
 
