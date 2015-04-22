@@ -150,23 +150,13 @@ void Shell() { //phase 6
 
 	while (1) {
 		while (1) { // Loop A
-			MyStrCpy(msg.data, "Valid Commands are: whoami, bye\n\0");
+			MyStrcpy(msg.data, "Valid Commands are: whoami, bye\n\0");
 
 			msg.recipient = STDOUT;
 			MsgSnd(&msg);
 			MsgRcv(&msg);
 
-			MyStrCpy(msg.data, "login: \0");
-			msg.recipient = STDOUT;
-			MsgSnd(&msg);
-			MsgRcv(&msg);
-
-			msg.recipient = STDIN;
-			MsgSnd(&msg);
-			MsgRcv(&msg);
-			MyStrCpy(login, msg.data);
-
-			MyStrCpy(msg.data, "password: \0");
+			MyStrcpy(msg.data, "login: \0");
 			msg.recipient = STDOUT;
 			MsgSnd(&msg);
 			MsgRcv(&msg);
@@ -174,13 +164,23 @@ void Shell() { //phase 6
 			msg.recipient = STDIN;
 			MsgSnd(&msg);
 			MsgRcv(&msg);
-			MyStrCpy(password, msg.data);
+			MyStrcpy(login, msg.data);
+
+			MyStrcpy(msg.data, "password: \0");
+			msg.recipient = STDOUT;
+			MsgSnd(&msg);
+			MsgRcv(&msg);
+
+			msg.recipient = STDIN;
+			MsgSnd(&msg);
+			MsgRcv(&msg);
+			MyStrcpy(password, msg.data);
 
 			final = MyStrcmp(login, password);
 			if (final) {
 				break;
 			} else if (final == 0) {
-				MyStrCpy(msg.data, "Invalid login!\n\0");
+				MyStrcpy(msg.data, "Invalid login!\n\0");
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
@@ -189,7 +189,7 @@ void Shell() { //phase 6
 		} // Loop A
 
 		while (1) { // Loop B
-			MyStrCpy(msg.data, "Enter command: \0"); // prompt for entering command string
+			MyStrcpy(msg.data, "Enter command: \0"); // prompt for entering command string
 			msg.recipient = STDOUT; // get command string entered
 
 			if (MyStrlen(msg.data) == 0) {
@@ -198,17 +198,17 @@ void Shell() { //phase 6
 			if (MyStrcmp(msg.data, "bye\0")) {
 				break;
 			}
-			if (MysStrcmp(msg.data, "whoami\0")) {
-				MyStrCpy(msg.data, login);
+			if (MyStrcmp(msg.data, "whoami\0")) {
+				MyStrcpy(msg.data, login);
 				MsgSnd(&msg);
 				MsgRcv(&msg);
-				MyStrCpy(msg.data, "\n\0");
+				MyStrcpy(msg.data, "\n\0");
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
 				continue;
 			} else {
-				MsgStrCpy(msg.data, "Command not found!\n\0");
+				MyStrcpy(msg.data, "Command not found!\n\0");
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);

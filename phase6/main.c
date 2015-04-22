@@ -19,7 +19,7 @@ semaphore_t semaphore[Q_SIZE]; //added in phase 3
 pcb_t pcb[MAX_PROC];    // process table
 char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
-
+terminal_t terminal;
 mbox_t mbox[MAX_PROC]; // Mailbox ID is the Process ID
 
 void SetEntry(int entry_num, func_ptr_t func_ptr){
