@@ -9,10 +9,11 @@ void Idle();
 void UserProc();
 void PrintDriver();
 void Init();
-void shell();
-/*
+
+void Shell();
 void STDIN();
 void STDOUT();
-void FileMgr();
-*/
+
+//void FileMgr();
+
 #endif

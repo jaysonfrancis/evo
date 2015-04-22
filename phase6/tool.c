@@ -94,14 +94,26 @@ void MyStrcpy(char *dest, char *src) { // destination 1st, then source
 }
 
 
-<<<<<<< HEAD
-int MyStrcmp(char *, char *){}
 
-int MyStrlen(char *){}
+int MyStrcmp(char *a, char *b){
+  while (*a && *b){
+    if(*a == *b){
+      a++;
+      b++;
+    }else return 0;
+  }
+  if(*a!=*b){ return 0; }
+
+  return 1; 
+}
 
 
-=======
->>>>>>> origin/master
+int MyStrlen(char *str1){
+  int length;
+  while(* *str1 != '\0'){ length ++; }
+  return length;
+}
+
 
 
 
