@@ -233,3 +233,59 @@ void IRQ7ISR(){ //phase 4
 
 }
 
+void IRQ3ISR(){
+  int event;
+  outportb(0x20,0x63);
+  event = inportb(COM2_IOBASE+IIR);
+  switch (event){//reading event from COM2_IOBASE+IIR
+    case IIR_TXRDY:
+      IRQ3TX();
+      break;
+    case IIR_RXRDY:
+      IRQ3RX();
+      break;  
+  }  
+
+  if(terminal.TX_extra==1) IRQ3TX();
+}
+
+void IRQ3TX(){
+  char chr = '\0';
+
+  if(terminal.echo_q.size !=0){
+    chr = (char) DeQ(&terminal.echo_q); //set ch to the first element in exho_q 
+  }else{
+    if(terminal.TX_q.size != 0){
+      chr = (char) DeQ(&terminal.TX_q);
+      SemPostISR(terminal.TX_sem);
+    }
+  }
+
+  if(chr == '\0'){
+    terminal.TX_extra = 1;
+  } else {
+    outportb(COM2_IOBASE+DATA,chr); //sending char to COM2_IOBASE
+    terminal.TX_extra = 0;
+  }
+}
+
+void IRQ3RX() { // queue char read from port to RX and echo queues
+      char chr;
+
+      // use 127 to mask out msb (rest 7 bits in ASCII range)
+      chr = inportb(COM2_IOBASE+DATA) & 0x7F;  // mask 0111 1111
+      EnQ(chr , &terminal.RX_q);//enqueue ch to RX queue
+      SemPostISR(terminal.RX_sem);//SemPostISR( RX semaphore of terminal interface )
+
+      if(chr == '\r'){//if ch is '\r' {
+         EnQ((int) '\r', &terminal.echo_q);//enqueue '\r' 
+         EnQ((int) '\n', &terminal.echo_q);//then '\n' to echo queue of terminal interface
+      } else {
+         if(terminal.echo == 1){//if echo of terminal interface is 1 {
+             EnQ((int) chr , &terminal.echo_q);//enqueue ch to echo queue of terminal interface
+         }
+      }
+  
+}
+
+

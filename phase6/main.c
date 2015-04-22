@@ -39,7 +39,8 @@ void InitIDT(){
    SetEntry(MSGSND_INTR,MsgSndEntry);
    SetEntry(MSGRCV_INTR,MsgRcvEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
-   outportb(0x21,~129);
+   SetEntry(IRQ3_INTR, IRQ3Entry);
+   outportb(0x21,~12+8+1);
 }
 
 
@@ -129,6 +130,9 @@ void Kernel(TF_t *TF_ptr) {
       case MSGSND_INTR:
          MsgSndISR(); //pass something into it?
          break;
+      case IRQ3_INTR:
+         IRQ3ISR();
+         break;   
       case IRQ7_INTR: //4
          IRQ7ISR();
          break;    
