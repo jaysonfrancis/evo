@@ -61,6 +61,10 @@ void InitData() {
    CRP = 0;
    print_it = 0;//4
 
+CreateISR(3);
+CreateISR(4);
+CreateISR(5);
+CreateISR(6);
 }
 
 void SelectCRP() {       // select which PID to be new CRP

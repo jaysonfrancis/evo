@@ -27,16 +27,23 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
       pcb[pid].TF_ptr--;
       // fill out trapframe of this new proc:
-      if(pid==0) pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
-      if(pid==2) pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver; // other new process
-      if(pid==1) pcb[pid].TF_ptr->eip = (unsigned int)Init;
-
-      // Userproc not used for phase5
-      if(pid!=1 && pid !=0 && pid != 2) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
-      //fill out trapframe
-      //if(pid==0){
-        //pcb[pid].TF_ptr
-      //}
+      if(pid == 0){
+        pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
+      }else if(pid == 1){
+        pcb[pid].TF_ptr->eip = (unsigned int)Init; // print process
+      }else if(pid == 2){
+        pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver;
+      }else if(pid == 3){
+        pcb[pid].TF_ptr->eip = (unsigned int)Shell;
+      }else if(pid == 4){
+        pcb[pid].TF_ptr->eip = (unsigned int)STDIN;
+      }else if(pid == 5){
+        pcb[pid].TF_ptr->eip = (unsigned int)STDOUT;
+      }else if(pid == 6){
+        pcb[pid].TF_ptr->eip = (unsigned int)FileMgr;
+      }else{
+        pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
+      }          
 
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();

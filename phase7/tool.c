@@ -120,3 +120,19 @@ int MyStrlen(char *str1) {
 	return length;
 }
 
+
+
+void MyMemcpy(char *dest, char *src, int size){
+	int i;
+	for(i = 0; i <= size ; i++){
+		*dest = *src;
+		src++;
+		dest++; }	
+}
+
+int MyStrcmpSize(char *p, char *q, int size){
+	for(i = 0; i <= size ; i++){
+		if(*s1 == *s2){
+			s1++;
+			s2++;
+		}else return 0; } return 1; }

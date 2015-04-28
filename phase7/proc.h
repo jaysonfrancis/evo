@@ -14,6 +14,10 @@ void Shell();
 void STDIN();
 void STDOUT();
 
+void ShellTyp();
+void ShellDir();
+void ShellDirStr();
+
 //void FileMgr();
 
 #endif
