@@ -30,7 +30,10 @@ void CreateISR(int pid) {
       if(pid==0) pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
       if(pid==2) pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver; // other new process
       if(pid==1) pcb[pid].TF_ptr->eip = (unsigned int)Init;
-
+      if(pid==3) pcb[pid].TF_ptr->eip = (unsigned int) Shell;
+      if(pid==4) pcb[pid].TF_ptr->eip = (unsigned int) STDIN;
+      if(pid==5) pcb[pid].TF_ptr->eip = (unsigned int) STDOUT; 
+      if(pid==6) pcb[pid].TF_ptr->eip = (unsigned int) FileMgr;
       // Userproc not used for phase5
       if(pid!=1 && pid !=0 && pid != 2) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
       //fill out trapframe

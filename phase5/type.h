@@ -41,7 +41,9 @@ typedef void (* func_ptr_t)(); // void-returning function pointer type
 typedef struct {
    int sender,                // Sender
        recipient,             // Recipient
-       time_stamp;            // Time sent
+       time_stamp,            // Time sent
+       code;
+    int number[3];
    char data[101];            // Data bytes
 } msg_t;
 

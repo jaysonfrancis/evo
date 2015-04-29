@@ -191,6 +191,12 @@ void Shell() { //phase 6
 		while (1) { // Loop B
 			MyStrcpy(msg.data, "Enter command: \0"); // prompt for entering command string
 			msg.recipient = STDOUT; // get command string entered
+			MsgSnd(&msg);
+            MsgRcv(&msg);
+
+            msg.recipient=STDIN;
+         	MsgSnd(&msg);
+         	MsgRcv(&msg);
 
 			if (MyStrlen(msg.data) == 0) {
 				continue;
@@ -232,10 +238,10 @@ void STDIN(void) {
 			if (ch == '\r') {
 				break;
 			}
-			p++;
-			p = ch;
+			
+			*p++ = ch;
 		}
-		p = '\0';
+		*p = '\0';
 		msg.recipient = msg.sender;
 		msg.sender = CRP;
 		MsgSnd(&msg);
@@ -252,7 +258,8 @@ void STDOUT(void) {
 
 		while (*p != '\0') {
 			SemWait(terminal.TX_sem);
-			EnQ( (int)p, &terminal.TX_q);
+			EnQ( *p, &terminal.TX_q);
+			TipIRQ3();
 			if (*p == '\n') {
 				SemWait(terminal.TX_sem);
 				EnQ((int) '\r', &terminal.TX_q);
@@ -262,4 +269,211 @@ void STDOUT(void) {
 		msg.recipient = msg.sender;
 		MsgSnd(&msg);
 	}
+}
+
+void ShellDir(char *cmd, int STDOUT, int FileMgr) {
+	      char obj[101], str[101];
+	      msg_t msg;
+
+	   // if cmd is "dir\0" (or "333\0") assume root: "dir /\0"
+	   // else, there should be an obj after 1st 4 letters "dir "
+	      if(MyStrcmp(cmd, "dir\0") == 1 || MyStrcmp(cmd, "333\0") == 1) {
+	         obj[0] = '/';
+	         obj[1] = '\0';                           // null-terminate the obj[]
+	      } else {
+	         cmd += 4;         // skip 1st 4 letters "dir " and get the rest (obj)
+	         MyStrcpy(obj, cmd); // make sure cmd is null-terminated from Shell()
+	      }
+
+	   //*************************************************************************
+	   // write code:
+	   // apply standard "check object" protocol
+	   //    prep msg: put correct code and obj into msg
+	   //    send msg to FileMgr, receive reply, chk result code
+	   // if code is not GOOD
+	   //    prompt error msg via STDOUT
+	   //    receive reply
+	   //    return;        // cannot continue
+	   //*************************************************************************
+	   MyStrCpy(msg.data,obj);
+	   msg.code=80;
+	   
+	   
+	   msg.recipient=FileMgr;
+	   MsgSnd(&msg);
+	   MsgRcv(&msg);
+	   
+	   if(msg.code != 1){
+	      MyStrCpy(msg.data,"Error No Good Object \n\0");
+	      msg.recipient=STDOUT;
+	      MsgSnd(&msg);
+	      MsgRcv(&msg);   
+	      return;        
+	   }
+	   //*************************************************************************
+	   // otherwise, code is good, returned msg has an "attr_t" type,
+	   // check if user directed us to a file, then "dir" for that file;
+	   // write code:
+	   // p = (attr_t *)msg.data;
+	   //
+	   // if( ! A_ISDIR(p->mode) ) {
+	   //    ShellDirStr(p, str);        // str will be built and returned
+	   //    prep msg and send to STDOUT
+	   //    receive reply
+	   //    return;
+	   // }
+	   //*************************************************************************
+	   p = (attr_t *) msg.data;
+	   
+	   if( ! A_ISDIR(p->mode) ) {
+	      ShellDirStr(p, str);        // str will be built and returned
+	      //prep msg and send to STDOUT
+	      MyStrCpy(msg.data,str);
+	      msg.recipient=STDOUT;
+	      MsgSnd(&msg);
+	      //receive reply
+	      MsgRcv(&msg);
+	      return;
+	   }
+	   //*************************************************************************
+	   // if continued here, it's a directory
+	   // request to open it, then issue read in loop
+	   // write code:
+	   // apply standard "open object" protocol
+	   // prep msg: put code and obj in msg
+	   // send msg to FileMgr, receive msg back (should be OK)
+	   //
+	   // loop
+	   //    apply standard "read object" protocol
+	   //    prep msg: put code in msg and send to FileMgr
+	   //    receive reply
+	   //    if code came back is not GOOD, break loop
+	   //    (if continued, code was good)
+	   //    do the same thing with ShellDirStr() like above
+	   //    then show str via STDOUT
+	   // }
+	   //*************************************************************************
+	   MyStrCpy(msg.data,obj);
+	   msg.code=81;
+	   // send msg to FileMgr, receive msg back (should be OK)
+	   msg.recipient=FileMgr;
+	   MsgSnd(&msg);
+	   MsgRcv(&msg);
+	   //*************************************************************************
+	   // write code:
+	   // (abbreviated below since same as what done above)
+	   // apply standard "close object" protocol with FileMgr
+	   // if response is not GOOD, display error msg via STDOUT...
+	   //*************************************************************************
+	   while(1){
+	      //    apply standard "read object" protocol
+	      //    prep msg: put code in msg and send to FileMgr
+	      MyStrCpy(msg.data,obj);
+	      msg.code=82;
+	      msg.recipient=FileMgr;
+	      MsgSnd(&msg);
+	       //    receive reply
+	      MsgRcv(&msg);
+	      
+	      //    if code came back is not GOOD, break loop
+	      if(msg.code != 1){
+	         break;
+	      }
+	      //    (if continued, code was good)
+	      //    do the same thing with ShellDirStr() like above
+	      ShellDirStr(p, str);       
+	      //prep msg and send to STDOUT
+	      MyStrCpy(msg.data,str);
+	      //    then show str via STDOUT
+	      msg.recipient=STDOUT;
+	      MsgSnd(&msg);
+	      //receive reply
+	      MsgRcv(&msg);
+	   }
+	   //*************************************************************************
+	   //*************************************************************************
+	   // write code:
+	   // (abbreviated below since same as what done above)
+	   // apply standard "close object" protocol with FileMgr
+	   MyStrCpy(msg.data,obj);
+	   msg.code=84;//close obj
+	   // send msg to FileMgr, receive msg back (should be OK)
+	   msg.recipient=FileMgr;
+	   MsgSnd(&msg);
+	   MsgRcv(&msg);
+	   
+	   // if response is not GOOD, display error msg via STDOUT...
+	   if(msg.code != 1){
+	      MyStrCpy(msg.data,"Error Closing Object! \0");
+	      msg.recipient=STDOUT;
+	      MsgSnd(&msg);
+	      MsgRcv(&msg);
+	   }
+
+   }
+
+   void ShellTyp(char *cmd, int STDOUT, int FileMgr) {
+      char obj[101],str[101]; // get away without obj
+      attr_t *p;
+      msg_t msg;
+
+   
+
+	   //cmd++;
+	   cmd += 4;
+	   MyStrCpy(msg.data, cmd);
+	   //result = ChkObj(msg.data, (attr_t *) msg.data)
+	   msg.code=80;//chek obj// prep msg: put correct code and obj into msg
+	   // send msg to FileMgr, receive reply, chk result code
+	   msg.recipient=FileMgr;
+	   MsgSnd(&msg);
+	   MsgRcv(&msg);
+	   if(msg.code != 1){
+	      MyStrCpy(msg.data,"Error No Good Object \n\0");//    prompt error msg via STDOUT
+	      msg.recipient=STDOUT;
+	      MsgSnd(&msg);
+	      MsgRcv(&msg);   
+	      return;
+	   }//
+	   
+	   p = (attr_t * ) msg.data; 
+
+	   if(msg.code != GOOD || A_ISDIR(p->mode)){
+	   	MyStrCpy(msg.data,"Usage: typ [path]<filename>\n\0");
+	   	msg.recipient = STDOUT;
+	   	MsgSnd(&msg);
+	   	MsgRcv(&msg);
+	   	return;
+	   }else{
+	      MyStrCpy(msg.data, cmd);
+	   	msg.code = OPEN_OBJ;
+	   	msg.recipient = FileMgr;
+	   	MsgSnd(&msg);
+	   	MsgRcv(&msg);
+	   	
+	   	 while(1){
+	   	 
+	   		//MyStrCpy(msg.data,obj);
+	   		msg.code=READ_OBJ;
+	   		msg.recipient=FileMgr;
+	   		MsgSnd(&msg);
+	   		MsgRcv(&msg);
+	   	
+	   		if(msg.code != 1){
+	   			break;
+	   		}
+	   	   //ShellDirStr(p, str);
+	   		//MyStrCpy(msg.data,obj);
+	   		msg.recipient=STDOUT;
+	   		MsgSnd(&msg);
+	   		MsgRcv(&msg);	
+	   	}
+	   	//MyStrCpy(msg.data,obj);
+	   	MyStrCpy(msg.data, cmd);
+	   	msg.code = CLOSE_OBJ;
+	   	msg.recipient = FileMgr;
+	   	MsgSnd(&msg);
+	   	MsgRcv(&msg);
+	   }
+	   
 }

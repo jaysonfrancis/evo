@@ -40,7 +40,7 @@ void InitIDT(){
    SetEntry(MSGRCV_INTR,MsgRcvEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
    SetEntry(IRQ3_INTR, IRQ3Entry);
-   outportb(0x21,~12+8+1);
+   outportb(0x21,~(128+8+1));
 }
 
 
@@ -83,13 +83,15 @@ void SelectCRP() {       // select which PID to be new CRP
    
 }
 int main() {
-   int i,j;
+   int i,j,k;
    InitData();       //call Init Data to initialize kernel data
    CreateISR(0);  //call CreateISR(0) to create Idle process (PID 0)
    i=DeQ(&none_q);
    CreateISR(i);
    j=DeQ(&none_q);
    CreateISR(j);
+   k = DeQ(&none_q);
+   CreateISR(k);
    InitIDT();
    Dispatch(pcb[0].TF_ptr);    // to dispatch/run CRP
    

@@ -115,9 +115,29 @@ int MyStrcmp(char *a, char *b) {
 
 int MyStrlen(char *str1) {
 	int length;
-	while (*str1 != '\0') {
+	while (*str1++ != '\0') {
 		length++;
 	}
 	return length;
 }
 
+void MyMemcpy(char *dest, char *src, int size){
+	int i;
+	for(i = 0; i <= size ; i++){
+		*dest = *src;
+		src++;
+		dest++;
+	}
+}
+
+int MyStrcmpSize(char *p, char *q, int size){
+	int i;
+	for(i = 0; i < size ; i++){
+		if(*p == *q){
+			p++;
+			q++;
+		}else 
+			return 0;
+	}
+	return 1;
+}

@@ -13,7 +13,8 @@ void Init();
 void Shell();
 void STDIN();
 void STDOUT();
-
+void ShellDir();
+void ShellTyp();
 //void FileMgr();
 
 #endif
