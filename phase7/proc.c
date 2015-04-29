@@ -7,7 +7,7 @@
 #include "tool.h"
 #include "extern.h"  // for current_run_pid needed here below
 #include "proc.h"     // for Idle, SimpleProc, DispatchProc
-
+#include "FileMgr.h"
 void Idle() {
 	int i; // Added for seconds
 	for (;;) { // Infinity loop
@@ -37,7 +37,7 @@ void UserProc() {
 void PrintDriver() {
 	int i, code, thePID;
 	msg_t my_msg;
-	// char str[] = "Hello, my Team is called Evo!\n\0";
+// char str[] = "Hello, my Team is called Evo!\n\0";
 	char *p;
 
 	print_semaphore = SemGet(-1); // should it be -1? depends on IRQISR()
@@ -274,7 +274,7 @@ void STDOUT(void) {
 void ShellDir(char *cmd, int STDOUT, int FileMgr) {
 	      char obj[101], str[101];
 	      msg_t msg;
-
+	      attr_t *p;
 	   // if cmd is "dir\0" (or "333\0") assume root: "dir /\0"
 	   // else, there should be an obj after 1st 4 letters "dir "
 	      if(MyStrcmp(cmd, "dir\0") == 1 || MyStrcmp(cmd, "333\0") == 1) {
@@ -325,7 +325,7 @@ void ShellDir(char *cmd, int STDOUT, int FileMgr) {
 	   //*************************************************************************
 	   p = (attr_t *) msg.data;
 	   
-	   if( ! A_ISDIR(p->mode) ) {
+	   if( !A_ISDIR(p->mode) ) {
 	      ShellDirStr(p, str);        // str will be built and returned
 	      //prep msg and send to STDOUT
 	      MyStrCpy(msg.data,str);

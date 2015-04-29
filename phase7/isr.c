@@ -7,7 +7,7 @@
 #include "extern.h"
 #include "proc.h"
 #include "syscall.h"
-
+#include "FileMgr.h"
 int PIDtoWake;
 int wakeLength;
 void CreateISR(int pid) {
