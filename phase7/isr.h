@@ -14,4 +14,7 @@ int SemGetISR();
 void MsgSndISR();
 void MsgRcvISR();
 void IRQ7ISR();
+void IRQ3ISR();
+void IRQ3TX();
+void IRQ3RX();
 #endif

@@ -27,23 +27,16 @@ void CreateISR(int pid) {
       pcb[pid].TF_ptr = (TF_t *)&stack[pid][STACK_SIZE];
       pcb[pid].TF_ptr--;
       // fill out trapframe of this new proc:
-      if(pid == 0){
-        pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
-      }else if(pid == 1){
-        pcb[pid].TF_ptr->eip = (unsigned int)Init; // print process
-      }else if(pid == 2){
-        pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver;
-      }else if(pid == 3){
-        pcb[pid].TF_ptr->eip = (unsigned int)Shell;
-      }else if(pid == 4){
-        pcb[pid].TF_ptr->eip = (unsigned int)STDIN;
-      }else if(pid == 5){
-        pcb[pid].TF_ptr->eip = (unsigned int)STDOUT;
-      }else if(pid == 6){
-        pcb[pid].TF_ptr->eip = (unsigned int)FileMgr;
-      }else{
-        pcb[pid].TF_ptr->eip = (unsigned int)UserProc; // other new process
-      }          
+      if(pid==0) pcb[pid].TF_ptr->eip = (unsigned int)Idle; // Idle process
+      if(pid==2) pcb[pid].TF_ptr->eip = (unsigned int)PrintDriver; // other new process
+      if(pid==1) pcb[pid].TF_ptr->eip = (unsigned int)Init;
+
+      // Userproc not used for phase5
+      if(pid!=1 && pid !=0 && pid != 2) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
+      //fill out trapframe
+      //if(pid==0){
+        //pcb[pid].TF_ptr
+      //}
 
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();
@@ -239,4 +232,60 @@ void IRQ7ISR(){ //phase 4
 
 
 }
+
+void IRQ3ISR(){
+  int event;
+  outportb(0x20,0x63);
+  event = inportb(COM2_IOBASE+IIR);
+  switch (event){//reading event from COM2_IOBASE+IIR
+    case IIR_TXRDY:
+      IRQ3TX();
+      break;
+    case IIR_RXRDY:
+      IRQ3RX();
+      break;  
+  }  
+
+  if(terminal.TX_extra==1) IRQ3TX();
+}
+
+void IRQ3TX(){
+  char chr = '\0';
+
+  if(terminal.echo_q.size !=0){
+    chr = (char) DeQ(&terminal.echo_q); //set ch to the first element in exho_q 
+  }else{
+    if(terminal.TX_q.size != 0){
+      chr = (char) DeQ(&terminal.TX_q);
+      SemPostISR(terminal.TX_sem);
+    }
+  }
+
+  if(chr == '\0'){
+    terminal.TX_extra = 1;
+  } else {
+    outportb(COM2_IOBASE+DATA,chr); //sending char to COM2_IOBASE
+    terminal.TX_extra = 0;
+  }
+}
+
+void IRQ3RX() { // queue char read from port to RX and echo queues
+      char chr;
+
+      // use 127 to mask out msb (rest 7 bits in ASCII range)
+      chr = inportb(COM2_IOBASE+DATA) & 0x7F;  // mask 0111 1111
+      EnQ(chr , &terminal.RX_q);//enqueue ch to RX queue
+      SemPostISR(terminal.RX_sem);//SemPostISR( RX semaphore of terminal interface )
+
+      if(chr == '\r'){//if ch is '\r' {
+         EnQ((int) '\r', &terminal.echo_q);//enqueue '\r' 
+         EnQ((int) '\n', &terminal.echo_q);//then '\n' to echo queue of terminal interface
+      } else {
+         if(terminal.echo == 1){//if echo of terminal interface is 1 {
+             EnQ((int) chr , &terminal.echo_q);//enqueue ch to echo queue of terminal interface
+         }
+      }
+  
+}
+
 

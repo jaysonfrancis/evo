@@ -15,8 +15,5 @@ void MyStrcpy(char *dest, char *src);
 int MyStrcmp(char *, char *);
 int MyStrlen(char *);
 
-void MyMemcpy(char *, char *, int )
-int MyStrcmpSize(char *, char *, int )
-
 #endif
 

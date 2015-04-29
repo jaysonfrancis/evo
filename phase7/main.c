@@ -19,7 +19,7 @@ semaphore_t semaphore[Q_SIZE]; //added in phase 3
 pcb_t pcb[MAX_PROC];    // process table
 char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
-
+terminal_t terminal;
 mbox_t mbox[MAX_PROC]; // Mailbox ID is the Process ID
 
 void SetEntry(int entry_num, func_ptr_t func_ptr){
@@ -39,7 +39,8 @@ void InitIDT(){
    SetEntry(MSGSND_INTR,MsgSndEntry);
    SetEntry(MSGRCV_INTR,MsgRcvEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
-   outportb(0x21,~129);
+   SetEntry(IRQ3_INTR, IRQ3Entry);
+   outportb(0x21,~12+8+1);
 }
 
 
@@ -61,10 +62,6 @@ void InitData() {
    CRP = 0;
    print_it = 0;//4
 
-CreateISR(3);
-CreateISR(4);
-CreateISR(5);
-CreateISR(6);
 }
 
 void SelectCRP() {       // select which PID to be new CRP
@@ -133,6 +130,9 @@ void Kernel(TF_t *TF_ptr) {
       case MSGSND_INTR:
          MsgSndISR(); //pass something into it?
          break;
+      case IRQ3_INTR:
+         IRQ3ISR();
+         break;   
       case IRQ7_INTR: //4
          IRQ7ISR();
          break;    

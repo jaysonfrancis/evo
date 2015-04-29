@@ -150,23 +150,13 @@ void Shell() { //phase 6
 
 	while (1) {
 		while (1) { // Loop A
-			MyStrCpy(msg.data, "Valid Commands are: whoami, bye\n\0");
+			MyStrcpy(msg.data, "Valid Commands are: whoami, bye\n\0");
 
 			msg.recipient = STDOUT;
 			MsgSnd(&msg);
 			MsgRcv(&msg);
 
-			MyStrCpy(msg.data, "login: \0");
-			msg.recipient = STDOUT;
-			MsgSnd(&msg);
-			MsgRcv(&msg);
-
-			msg.recipient = STDIN;
-			MsgSnd(&msg);
-			MsgRcv(&msg);
-			MyStrCpy(login, msg.data);
-
-			MyStrCpy(msg.data, "password: \0");
+			MyStrcpy(msg.data, "login: \0");
 			msg.recipient = STDOUT;
 			MsgSnd(&msg);
 			MsgRcv(&msg);
@@ -174,13 +164,23 @@ void Shell() { //phase 6
 			msg.recipient = STDIN;
 			MsgSnd(&msg);
 			MsgRcv(&msg);
-			MyStrCpy(password, msg.data);
+			MyStrcpy(login, msg.data);
+
+			MyStrcpy(msg.data, "password: \0");
+			msg.recipient = STDOUT;
+			MsgSnd(&msg);
+			MsgRcv(&msg);
+
+			msg.recipient = STDIN;
+			MsgSnd(&msg);
+			MsgRcv(&msg);
+			MyStrcpy(password, msg.data);
 
 			final = MyStrcmp(login, password);
 			if (final) {
 				break;
 			} else if (final == 0) {
-				MyStrCpy(msg.data, "Invalid login!\n\0");
+				MyStrcpy(msg.data, "Invalid login!\n\0");
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
@@ -189,17 +189,8 @@ void Shell() { //phase 6
 		} // Loop A
 
 		while (1) { // Loop B
-			MyStrCpy(msg.data, "Enter command: \0"); // prompt for entering command string
+			MyStrcpy(msg.data, "Enter command: \0"); // prompt for entering command string
 			msg.recipient = STDOUT; // get command string entered
-
-
-			MsgSnd(&msg);
-         	MsgRcv(&msg);  
-         	//get command string entered
-        	msg.recipient=STDIN;
-        	MsgSnd(&msg);
-        	MsgRcv(&msg);
-
 
 			if (MyStrlen(msg.data) == 0) {
 				continue;
@@ -207,17 +198,17 @@ void Shell() { //phase 6
 			if (MyStrcmp(msg.data, "bye\0")) {
 				break;
 			}
-			if (MysStrcmp(msg.data, "whoami\0")) {
-				MyStrCpy(msg.data, login);
+			if (MyStrcmp(msg.data, "whoami\0")) {
+				MyStrcpy(msg.data, login);
 				MsgSnd(&msg);
 				MsgRcv(&msg);
-				MyStrCpy(msg.data, "\n\0");
+				MyStrcpy(msg.data, "\n\0");
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
 				continue;
 			} else {
-				MsgStrCpy(msg.data, "Command not found!\n\0");
+				MyStrcpy(msg.data, "Command not found!\n\0");
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
@@ -272,128 +263,3 @@ void STDOUT(void) {
 		MsgSnd(&msg);
 	}
 }
-
-
-
-void ShellDirStr(attr_t *p, char *str) {
-   // p points to attr_t and then obj name (p+1)
-      char *obj = (char *)(p + 1);
-
-   // make str from the attr_t that p points to
-      sprintf(str, " - - - -  size =%6d     %s\n", p->size, obj);
-      if ( A_ISDIR(p->mode) ) str[1] = 'd';         // mode is directory
-      if ( QBIT_ON(p->mode, A_ROTH) ) str[3] = 'r'; // mode is readable
-      if ( QBIT_ON(p->mode, A_WOTH) ) str[5] = 'w'; // mode is writable
-      if ( QBIT_ON(p->mode, A_XOTH) ) str[7] = 'x'; // mode is executable
-   }
-
-
-oid ShellDir(char *cmd, int STDOUT, int FileMgr) {
-      char obj[101], str[101];
-      msg_t msg;
-
-   // if cmd is "dir\0" (or "333\0") assume root: "dir /\0"
-   // else, there should be an obj after 1st 4 letters "dir "
-      if(MyStrcmp(cmd, "dir\0") == 1 || MyStrcmp(cmd, "333\0") == 1) {
-         obj[0] = '/';
-         obj[1] = '\0';                           // null-terminate the obj[]
-      } else {
-         cmd += 4;         // skip 1st 4 letters "dir " and get the rest (obj)
-         MyStrCpy(obj, cmd); // make sure cmd is null-terminated from Shell()
-      }
-
-   //*************************************************************************
-   // write code:
-   MyStrCpy(msg,obj);// apply standard "check object" protocol
-   msg.code=80;//    prep msg: put correct code and obj into msg
-   
-   //    send msg to FileMgr, receive reply, chk result code
-   msg.recipient=FileMgr;
-   MsgSnd(&msg);
-   MsgRcv(&msg);
-   // if code is not GOOD
-   if(msg.code != 1){
-      MyStrCpy(msg.data,"Error Obj not good \n\0");//    prompt error msg via STDOUT
-      msg.recipient=STDOUT;
-      MsgSnd(&msg);
-      MsgRcv(&msg);   //    receive reply
-      return;//    return;        // cannot continue
-   }//*************************************************************************
-
-   //*************************************************************************
-   // otherwise, code is good, returned msg has an "attr_t" type,
-   // check if user directed us to a file, then "dir" for that file;
-   // write code:
-   // p = (attr_t *)msg.data;
-   //
-   // if( ! A_ISDIR(p->mode) ) {
-   //    ShellDirStr(p, str);        // str will be built and returned
-   //    prep msg and send to STDOUT
-   //    receive reply
-   //    return;
-   // }
-   //*************************************************************************
-
-   //*************************************************************************
-   // if continued here, it's a directory
-   // request to open it, then issue read in loop
-   // write code:
-   // apply standard "open object" protocol
-   // prep msg: put code and obj in msg
-   // send msg to FileMgr, receive msg back (should be OK)
-   //
-   // loop
-   //    apply standard "read object" protocol
-   //    prep msg: put code in msg and send to FileMgr
-   //    receive reply
-   //    if code came back is not GOOD, break loop
-   //    (if continued, code was good)
-   //    do the same thing with ShellDirStr() like above
-   //    then show str via STDOUT
-   // }
-   //*************************************************************************
-   //*************************************************************************
-   // write code:
-   // (abbreviated below since same as what done above)
-   // apply standard "close object" protocol with FileMgr
-   // if response is not GOOD, display error msg via STDOUT...
-   //*************************************************************************
-}
- 
-void ShellTyp(char *cmd, int STDOUT, int FileMgr) {
-   char obj[101], str[101]; // get away without obj
-   attr_t *p;
-   msg_t msg;
-
-   cmd+=4;
-   StrCpy(msg.data, cmd) // ?
-   msg.recipient = 6;
-   msg.code = CHK_OBJ;
-   MsgSnd(&msg);
-   MsgRcv(&msg);
-
-   if ( ( msg.code != GOOD ) || A_ISDIR(p->mode) ) 
-   {
- 	PromptUser("Usage: typ [path]<filename>\n\0"); // ??
-    return; } else {
-      while (1)
-      {
-         msg.recipient = 6;
-         msg.code = READ_OBJ;
-         MsgSnd(&msg);
-         MsgRcv(&msg);
-
-         if ( msg.code == GOOD ) { PromptUser(msg.data); }
-         else { break; }
-      }
-   }  
-   msg.recipient = 6;
-   msg.code = CLOSE_OBJ;
-   MsgSnd(&msg);
-   MsgRcv(&msg);
-   if ( msg.code != GOOD ) { PromptUser("FD object err"); }
-
- }
-
-
-

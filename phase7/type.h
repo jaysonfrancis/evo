@@ -42,8 +42,6 @@ typedef struct {
    int sender,                // Sender
        recipient,             // Recipient
        time_stamp;            // Time sent
-       code;
-   int number[3];
    char data[101];            // Data bytes
 } msg_t;
 
@@ -68,6 +66,6 @@ typedef struct {
       RX_sem,  // recieve data (arrived) count
       echo,   // echo back to terminal or not (typing)
       TX_extra; // if 1, TXRDY event occured but echo_q and TX_q were empty
-} terminal_t
+} terminal_t;
 
 #endif _TYPE_H_

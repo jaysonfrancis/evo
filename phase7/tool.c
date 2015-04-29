@@ -76,7 +76,8 @@ msg_t *MsgDeQ(msg_q_t *p) {
 		cons_printf("Msg queue is empty\n");
 		return '\0';
 	}
-	localmsg = p->&(msg[p->head]); // Syntax
+	
+	localmsg = &p->msg[p->head]; // Syntax
 	p->head++;
 	if (p->head == Q_SIZE) {
 		p->head = 0;
@@ -114,25 +115,9 @@ int MyStrcmp(char *a, char *b) {
 
 int MyStrlen(char *str1) {
 	int length;
-	while (**str1 != '\0') {
+	while (*str1 != '\0') {
 		length++;
 	}
 	return length;
 }
 
-
-
-void MyMemcpy(char *dest, char *src, int size){
-	int i;
-	for(i = 0; i <= size ; i++){
-		*dest = *src;
-		src++;
-		dest++; }	
-}
-
-int MyStrcmpSize(char *p, char *q, int size){
-	for(i = 0; i <= size ; i++){
-		if(*s1 == *s2){
-			s1++;
-			s2++;
-		}else return 0; } return 1; }
