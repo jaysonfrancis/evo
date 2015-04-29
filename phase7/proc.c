@@ -353,7 +353,7 @@ void ShellDir(char *cmd, int STDOUT, int FileMgr) {
 	   //    then show str via STDOUT
 	   // }
 	   //*************************************************************************
-	   MyStrCpy(msg.data,obj);
+	   MyStrcpy(msg.data,obj);
 	   msg.code=81;
 	   // send msg to FileMgr, receive msg back (should be OK)
 	   msg.recipient=FileMgr;
@@ -412,6 +412,18 @@ void ShellDir(char *cmd, int STDOUT, int FileMgr) {
 
    }
 
+   void ShellDirStr(attr_t *p, char *str) {
+   // p points to attr_t and then obj name (p+1)
+      char *obj = (char *)(p + 1);
+
+   // make str from the attr_t that p points to
+      sprintf(str, " - - - -  size =%6d     %s\n", p->size, obj);
+      if ( A_ISDIR(p->mode) ) str[1] = 'd';         // mode is directory
+      if ( QBIT_ON(p->mode, A_ROTH) ) str[3] = 'r'; // mode is readable
+      if ( QBIT_ON(p->mode, A_WOTH) ) str[5] = 'w'; // mode is writable
+      if ( QBIT_ON(p->mode, A_XOTH) ) str[7] = 'x'; // mode is executable
+   }
+   
    void ShellTyp(char *cmd, int STDOUT, int FileMgr) {
       char obj[101],str[101]; // get away without obj
       attr_t *p;
