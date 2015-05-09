@@ -108,6 +108,7 @@ void Shell() { //phase 6
 	char login[101], password[101];
 	int STDIN = 4, STDOUT = 5;
 	int final;
+	int FileMgr=6;
 // Clear 3 Queues
 	MyBZero((char *) &terminal.TX_q, sizeof(q_t));
 	MyBZero((char *) &terminal.RX_q, sizeof(q_t));
@@ -150,7 +151,7 @@ void Shell() { //phase 6
 
 	while (1) {
 		while (1) { // Loop A
-			MyStrcpy(msg.data, "Valid Commands are: whoami, bye\n\0");
+			MyStrcpy(msg.data, "Valid Commands: bye, who, dir[path],typ (file)\n\0");
 
 			msg.recipient = STDOUT;
 			MsgSnd(&msg);
@@ -206,6 +207,7 @@ void Shell() { //phase 6
 			}
 			if (MyStrcmp(msg.data, "whoami\0")) {
 				MyStrcpy(msg.data, login);
+				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
 				MyStrcpy(msg.data, "\n\0");

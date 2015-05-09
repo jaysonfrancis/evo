@@ -114,7 +114,7 @@ int MyStrcmp(char *a, char *b) {
 }
 
 int MyStrlen(char *str1) {
-	int length;
+	int length=0;
 	while (*str1++ != '\0') {
 		length++;
 	}
@@ -123,7 +123,7 @@ int MyStrlen(char *str1) {
 
 void MyMemcpy(char *dest, char *src, int size){
 	int i;
-	for(i = 0; i <= size ; i++){
+	for(i = 0; i < size ; i++){
 		*dest = *src;
 		src++;
 		dest++;

@@ -92,6 +92,12 @@ int main() {
    CreateISR(j);
    k = DeQ(&none_q);
    CreateISR(k);
+   i=DeQ(&none_q);
+   CreateISR(i);
+   j=DeQ(&none_q);
+   CreateISR(j);
+   k = DeQ(&none_q);
+   CreateISR(k);
    InitIDT();
    Dispatch(pcb[0].TF_ptr);    // to dispatch/run CRP
    
@@ -117,13 +123,13 @@ void Kernel(TF_t *TF_ptr) {
          SleepISR(TF_ptr->ebx);
          break;
       case SEMPOST_INTR:
-         SemPostISR(CRP);
+         SemPostISR(TF_ptr->ebx);
          break;
       case SEMWAIT_INTR:
-         SemWaitISR(CRP);
+         SemWaitISR(TF_ptr->ebx);
          break;
       case SEMGET_INTR: //4
-         pcb[CRP].TF_ptr->ebx = SemGetISR(pcb[CRP].TF_ptr->eax);
+         pcb[CRP].TF_ptr->ecx = SemGetISR(pcb[CRP].TF_ptr->ebx);
 
          break;
       case MSGRCV_INTR:

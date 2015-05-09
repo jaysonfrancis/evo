@@ -35,11 +35,8 @@ void CreateISR(int pid) {
       if(pid==5) pcb[pid].TF_ptr->eip = (unsigned int) STDOUT; 
       if(pid==6) pcb[pid].TF_ptr->eip = (unsigned int) FileMgr;
       // Userproc not used for phase5
-      if(pid!=1 && pid !=0 && pid != 2) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
-      //fill out trapframe
-      //if(pid==0){
-        //pcb[pid].TF_ptr
-      //}
+      if(pid<0 || pid>6) pcb[pid].TF_ptr->eip = (unsigned int)UserProc;
+
 
       pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
       pcb[pid].TF_ptr->cs = get_cs();
@@ -194,10 +191,10 @@ void MsgSndISR(){
   src = (msg_t *)pcb[CRP].TF_ptr->ebx;
   msg = src -> recipient;
   
+  src->sender = CRP;
+  src->time_stamp = sys_time;
   if ((mbox[msg].wait_q).size == 0){
     
-    src->sender = CRP;
-    src->time_stamp = sys_time;
     MsgEnQ(src, &mbox[msg].msg_q);
   }else{
     int tmp_pid = DeQ(&(mbox[msg].wait_q));
@@ -219,7 +216,7 @@ void MsgSndISR(){
   }else{
 
     temp = MsgDeQ(&mbox[CRP].msg_q);
-    *((msg_t *)pcb[pid].TF_ptr->ebx) = *temp;
+    *((msg_t *)pcb[CRP].TF_ptr->ebx) = *temp;
   }
 }
 
