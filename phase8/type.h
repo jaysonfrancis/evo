@@ -70,4 +70,9 @@ typedef struct {
       TX_extra; // if 1, TXRDY event occured but echo_q and TX_q were empty
 } terminal_t;
 
+//added in phase8
+typdef struct{
+  int owner, addr;
+} page_t
+
 #endif _TYPE_H_

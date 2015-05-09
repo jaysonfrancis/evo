@@ -107,6 +107,36 @@ dir_t root_dir[] = {
 // *********************************************************************
 fd_t fd_array[MAX_FD];  // one file descriptor for every OPEN_OBJ call
 // *********************************************************************
+// phase8 for MyHello.x
+char MyHello_data[]= {
+       #include "bin/MyHello.x"   // this must be a separate line
+    };
+    #define MYHELLO_SIZE (sizeof(MyHello_data))
+
+    dir_t bin_dir[]= {
+       { 16, MODE_DIR, ~0, ".", (char *)bin_dir },   // current dir
+       { 17, MODE_DIR, ~0, "..", (char *)root_dir }, // parent dir, forward declared
+       { 18, MODE_EXEC, MYSLEEP_SIZE, "8",       (char *)MyHello_data }, // also called "8"
+       { 19, MODE_EXEC, MYSLEEP_SIZE, "MyHello", (char *)MyHello_data }, // MySleep here
+       { 0, 0, 0, NULL, NULL },                      // no entries in dir
+       { END_DIR_INODE, 0, 0, NULL, NULL }           // end of bin_dir[]
+    };
+
+// phase 8 for MySleep.x
+char MySleep_data[]= {
+       #include "bin/MySleep.x"   // this must be a separate line
+    };
+    #define MYSLEEP_SIZE (sizeof(MySleep_data))
+
+    dir_t bin_dir[]= {
+       { 16, MODE_DIR, ~0, ".", (char *)bin_dir },   // current dir
+       { 17, MODE_DIR, ~0, "..", (char *)root_dir }, // parent dir, forward declared
+       { 18, MODE_EXEC, MYSLEEP_SIZE, "8",       (char *)MySleep_data }, // also called "8"
+       { 19, MODE_EXEC, MYSLEEP_SIZE, "MySleep", (char *)MySleep_data }, // MySleep here
+       { 0, 0, 0, NULL, NULL },                      // no entries in dir
+       { END_DIR_INODE, 0, 0, NULL, NULL }           // end of bin_dir[]
+    };
+
 
 // *********************************************************************
 // File Mgr, a process to answer queries and return file contents

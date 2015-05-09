@@ -289,3 +289,18 @@ void IRQ3RX() { // queue char read from port to RX and echo queues
 }
 
 
+// Added phase 8
+
+void ForkISR(){
+
+}
+
+void WaitISR(){
+
+}
+
+void ExitISR(){
+
+}
+
+

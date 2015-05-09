@@ -63,8 +63,30 @@ void MsgRcv(msg_t *p){
     :"g" ((int)p)
     :"%ebx");
   }
+
 void TipIRQ3(){
   asm("int $35");
+}
+
+void Fork(char *){
+   asm("movl %0, %%ebx; int $55" 
+       : 
+       : "g" ((int) message)                        // no input into asm()
+       : "ebx", "eax");
+}
+
+int Wait(int *){
+   asm("movl %0, %%ebx; int $56" 
+       : 
+       : "g" ((int) message)     
+       : "ebx", "eax"); 
+}
+
+void Exit(int){
+   asm("movl %0, %%ebx; int $57" 
+       : 
+       : "g" ((int) message)                        // no input into asm()
+       : "ebx", "eax"); 
 }
 
 

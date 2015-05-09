@@ -13,6 +13,9 @@ void MsgSnd(msg_t *p);
 void MsgRcv(msg_t *p);
 
 void TipIRQ3();
+void Fork(char *);
+int Wait(int *);
+void Exit(int);
 
 
 #endif

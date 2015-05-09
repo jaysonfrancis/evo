@@ -21,6 +21,8 @@ char stack[MAX_PROC][STACK_SIZE]; // run-time stacks for processes
 struct i386_gate *IDT_ptr;
 terminal_t terminal;
 mbox_t mbox[MAX_PROC]; // Mailbox ID is the Process ID
+page_t page[MAX_PROC];
+
 
 void SetEntry(int entry_num, func_ptr_t func_ptr){
    struct i386_gate *gateptr = &IDT_ptr[entry_num];
@@ -40,13 +42,16 @@ void InitIDT(){
    SetEntry(MSGRCV_INTR,MsgRcvEntry);
    SetEntry(IRQ7_INTR, IRQ7Entry); //program into entry.S
    SetEntry(IRQ3_INTR, IRQ3Entry);
+   SetEntry(FORK_INTR, ForkEntry);
+   SetEntry(WAIT_INTR, WaitEntry);
+   SetEntry(EXIT_INTR, ExitEntry);
    outportb(0x21,~(128+8+1));
 }
 
 
 
 void InitData() {
-   int i;
+   int i,j;
    sys_time = 0;
    //initializing 4 queues
    MyBZero((char *) &run_q,sizeof(run_q));
@@ -61,6 +66,11 @@ void InitData() {
    }
    CRP = 0;
    print_it = 0;//4
+
+   for(j = 1; j<MAX_PROC;j++){
+      page[j].owner = -1;
+      page[j].addr = 0xE00000 + 0x1000 * j;
+   }
 
 }
 
@@ -143,7 +153,16 @@ void Kernel(TF_t *TF_ptr) {
          break;   
       case IRQ7_INTR: //4
          IRQ7ISR();
-         break;    
+         break;   
+      case FORK_INTR:
+         ForkISR();
+      break;
+      case WAIT_INTR:
+         WaitISR();
+      break;      
+      case EXIT_INTR:
+         ExitISR();
+      break; 
       default:
          cons_printf("Something went wrong\n");
          breakpoint();

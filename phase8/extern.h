@@ -14,6 +14,6 @@ extern mbox_t mbox[MAX_PROC];
 extern int SemID;
 extern terminal_t terminal;
 extern int print_it;
-
+extern page_t page[MAX_PROC];
 
 #endif

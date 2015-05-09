@@ -27,7 +27,7 @@ x:
 str1:
    .ascii "ABCDEFGH!\n\0" # a string
 str2:                     # another string, 101 chars total
-   .ascii "Greetings from my OS TEAM NAME!\n"    # 32 chars
+   .ascii "Greetings from my OS Evo!\n"    # 32 chars
    .rept 69               # repeat 69 times
       .ascii "\0"         # null characters
    .endr                  # end repeat

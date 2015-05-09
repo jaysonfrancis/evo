@@ -14,7 +14,9 @@
 #define SEMGET_INTR 52
 #define MSGSND_INTR 53
 #define MSGRCV_INTR 54
-
+#define FORK_INTR 55
+#define WAIT_INTR 56
+#define EXIT_INTR 57
 #define IRQ3_INTR 35
 
 
