@@ -292,8 +292,55 @@ void IRQ3RX() { // queue char read from port to RX and echo queues
 // Added phase 8
 
 void ForkISR(){
+   int new_pid;
+   int end_page;
 
+   attr_t *attr = (attr_t*) pcb[CRP].TF_ptr->ebx;
+
+   new_pid = DeQ(&none_q);
+
+   if ( new_pid == -1 )
+   {
+      cons_printf("no more PID/RAM available");
+      pcb[CRP].TF_ptr->ecx = -1;
+      
+      return;
+   }
+   else
+   {
+      //setup new process
+      pcb[CRP].TF_ptr->ecx = new_pid;
+      pcb[new_pid].ppid = CRP;
+      
+      CreateISR(new_pid);
+
+      //assign RAM to owner
+      page[new_pid].owner = new_pid;
+      
+      //clear page
+      MyBZero((char*)page[new_pid].addr, 0x1000);
+
+      // copy executable data 
+      MyMemcpy((char*) page[new_pid].addr, attr->data, attr->size);
+
+      //where to copy
+      end_page =  0x1000 - sizeof(TF_t) + 1;
+      MyMemcpy(
+               (char*)(page[new_pid].addr + end_page),
+               (char*)pcb[new_pid].TF_ptr, 
+               sizeof(TF_t)
+              );
+
+      
+      pcb[new_pid].TF_ptr = (TF_t*) (page[new_pid].addr + end_page);
+
+      
+      pcb[new_pid].TF_ptr->eip = page[new_pid].addr + 128;
+      
+      EnQ(new_pid, &run_q);   
+   }
 }
+
 
 void WaitISR(){
 
