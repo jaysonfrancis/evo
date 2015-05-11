@@ -217,11 +217,43 @@ void Shell() { //phase 6
 				continue;
 			} else {
 				MyStrcpy(msg.data, "Command not found!\n\0");
+				msg = MessageFileManager(CHK_OBJ,msg.data);
+				p= (attr_t*) msg.data;
+				if (msg.code != GOOD ) 
+			   {
+			      // if result not GOOD, or p->mode is a directory
+			      //    display "Usage: typ [path]<filename>\n\0"
+			      //    and return, impossible to continue
+			      PromptUser("Usage: typ [path] filename \n\0");
+			      return;
+			   }
+			   else if (A_ISDIR(p->mode))
+			   {
+			      PromptUser("Typ cannot accept directories\n\0");
+			      PromptUser("Usage: typ [path] filename\n\0");
+			   }
+			   else
+			   {
+			      msg = MessageFileManager(OPEN_OBJ, obj);   
+
+			      while (1)
+			      {  
+			         msg = MessageFileManager(READ_OBJ, obj);
+
+			         if ( msg.code != GOOD )
+			         {
+			            break;
+			         }
+
+			         p = (attr_t*) msg.data;
+			         PromptUser(msg.data); 
+			      }
+			   }  
 				msg.recipient = STDOUT;
 				MsgSnd(&msg);
 				MsgRcv(&msg);
 			}
-		} //repeat loop B
+		} 
 	}
 
 }

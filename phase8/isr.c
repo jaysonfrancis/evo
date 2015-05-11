@@ -316,11 +316,7 @@ void ForkISR(){
 
       //assign RAM to owner
       page[new_pid].owner = new_pid;
-      
-      //clear page
-      MyBZero((char*)page[new_pid].addr, 0x1000);
-
-      // copy executable data 
+      MyBZero((char*)page[new_pid].addr, 0x1000); 
       MyMemcpy((char*) page[new_pid].addr, attr->data, attr->size);
 
       //where to copy
@@ -337,17 +333,94 @@ void ForkISR(){
       
       pcb[new_pid].TF_ptr->eip = page[new_pid].addr + 128;
       
-      EnQ(new_pid, &run_q);   
+      EnQ(new_pid, &run_q);
+      pcb[new_pid].state = RUN;
+
    }
 }
 
 
 void WaitISR(){
+  int j, i, child_exit_num, *parent_exit_num_ptr;
+  int zproc
+  //looking for zombie process
+  for(i = 0; i < MAX_PROC; i++){
+    if(pcb[i].ppid==CRP && pcb[i].state==ZOMBIE) zproc = i;
+  }//end for
 
+  if (zproc==-1){
+    pcb[CRP].TF_ptr->eax = zproc;
+
+    child_exit_num = pcb[zproc].TF_ptr->ebx;
+    parent_exit_num_ptr = (int*) pcb[CRP].TF_ptr->ebx;
+    *parent_exit_num_ptr = child_exit_num;
+
+    //putting CRP into run_q
+    EnQ(CRP, &run_q);
+    pcb[CRP].state = RUN;
+    CRP = -1;
+
+    //killing zombie process
+    EnQ(zproc, &none_q);
+    pcb[zproc].total_runtime += pcb[pid].runtime;
+    pcb[zproc].runtime = 0;
+    pcb[zproc].state = NONE;
+
+    //reclaiming memory
+     //reclaim memory
+   for(j = 0; j < MAX_PAGE; j++)
+   {
+      if(page[j].owner == pid){
+         page[j].owner = -1;
+         MyBzero((char*)page[j].addr, 0x1000);
+      }
+   }
+
+   zproc = -1
+
+  }else{
+    pcb[CRP].state = WAIT_CHILD;
+    CRP = -1;
+  }//end else
 }
 
 void ExitISR(){
+  int j, ppid, child_exit_num, *parent_exit_num_ptr;
 
+  ppid = pcb[CRP].ppid;
+
+  EnQ(CRP, &none_q);
+
+  if(pcb[ppid].state == WAIT_CHILD){
+    pcb[ppid].TF_ptr->eax = CRP;
+    child_exit_num = pcb[CRP].TF_ptr->ebx;
+    parent_exit_num_ptr = (int*) pcb[ppid].TF_ptr->ecx;
+    *parent_exit_num_ptr = child_exit_num;
+
+    EnQ(ppid, &run_q);
+    pcb[ppid].state = RUN;
+
+    EnQ(CRP, &none_q);
+    pcb[CRP].total_runtime += pcb[pid].runtime;
+    pcb[CRP].runtime = 0;
+    pcb[CRP].state = NONE;
+
+    //reclaiming memory
+     //reclaim memory
+   for(j = 0; j < MAX_PAGE; j++)
+   {
+      if(page[j].owner == pid){
+         page[j].owner = -1;
+         MyBzero((char*)page[j].addr, 0x1000);
+      }
+   }
+
+
+  }else{
+
+    pcb[CRP].state = ZOMBIE;
+  }
+  CRP = -1;
 }
 
 
