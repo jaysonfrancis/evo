@@ -23,6 +23,7 @@ terminal_t terminal;
 mbox_t mbox[MAX_PROC]; // Mailbox ID is the Process ID
 page_t page[MAX_PROC];
 
+int sys_main_table;
 
 void SetEntry(int entry_num, func_ptr_t func_ptr){
    struct i386_gate *gateptr = &IDT_ptr[entry_num];
@@ -53,6 +54,7 @@ void InitIDT(){
 void InitData() {
    int i,j;
    sys_time = 0;
+   sys_main_table = get_cr3(); // Tip 1 in Phase 9
    //initializing 4 queues
    MyBZero((char *) &run_q,sizeof(run_q));
    MyBZero((char *) &none_q,sizeof(none_q));
@@ -170,6 +172,7 @@ void Kernel(TF_t *TF_ptr) {
    }
  
    SelectCRP();    //call SelectCRP() to settle/determine for next CRP
+   set_cr3(pcb[CRP].main_table); // Phase 9, tip #4 - set the MMU to start using the designated main table for runtime memory address translation
    Dispatch(pcb[CRP].TF_ptr);
 }
 

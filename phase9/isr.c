@@ -19,6 +19,8 @@ void CreateISR(int pid) {
       pcb[pid].state= RUN;//state is set to RUN
       pcb[pid].runtime = 0;// both runtime counts are reset to 0
       pcb[pid].total_runtime = 0;// both runtime counts are reset to 0
+
+      pcb[pid].main_table = sys_main_table; // Phase 9  Tip #3
       
       MyBZero((char*) &mbox[pid], sizeof(mbox_t));
       MyBZero(stack[pid], STACK_SIZE); // erase stack
@@ -292,8 +294,114 @@ void IRQ3RX() { // queue char read from port to RX and echo queues
 // Added phase 8
 
 void ForkISR(){
-   int new_pid;
-   int end_page;
+   int new_pid, page_num, exec_addr, index[5], *p, main_table, code_table, stack_table, code_page, stack_page, i, x;
+
+   // A. Allocate a new PID and five RAM pages
+   new_pid = DeQ(&none_q);
+  
+      // A.1 if no PID available, consprintf, set ecx of CRP TF to -1, end this ISR
+   if ( new_pid == -1 ) { 
+        cons_printf("ForkISR(): No More PID available!\n");
+        pcb[CRP].TF_ptr->ecx = -1;
+        return;     
+        }
+
+
+      // A.2 (otherwise) allocate new_pid ??????
+      else {
+        pcb[CRP].TF_ptr->ecx = new_pid;
+
+      }
+        // ????????????????????????????? //
+
+
+      // A.3 loop to scan page[], if see one page available, set page to new_pid, index this page, if got five, break loop
+      for (i=0; i<MAX_PROC; i++){
+        if(page[i].owner == -1){
+          page[i].owner=new_pid;
+          index[x] = i;
+          x++;
+          if (x==5){ break; }
+        }
+      }
+
+
+      // A.4 if didn't get five indicies, cons print not enough mem, recycle/return new_pid, loop to return pages ust obtained, set ecx of CRP TF to -1, end isr
+      if (x!=5){
+        cons_printf("ForkISR(): not enough memory available!\n");
+        EnQ(new_pid, &none_q);
+        for(i=0; i<MAX_PROC; i++){
+          if(page[i].owner == new_pid){ page[i].owner=-1;}
+        }
+      }
+
+
+      // B. with five pages obtained, set these int, main_table, code_table, stack_table, code_page, stack_page, to address of obtained pages
+      main_table = page[index[0]].addr;
+      code_table = page[index[1]].addr;
+      stack_table = page[index[2]].addr;
+      code_page = page[index[3]].addr;
+      stack_page = page[index[4]].addr;
+
+      // C. Copy entries 0 to 15 from ss_main_table to main_table
+      MyMemcpy((char*)main_table, (char*)sys_main_table, 16);
+
+      // D. Set entries 512 and 767 of main_table to addresses of code_Table and stack_table, add two flags into entries
+      p=(int*)(main_table + (512*4));
+      *p = code_table + 0x003;  // flags
+
+      p=(int*)(stack_table + (767*4));
+      *p = stack_page + 0x003;  // flags
+
+      // E. set entry 0 of code_Table to addr of code_page (plus flags)
+      p=(int*)(code_table + 0);
+      *p = code_page + 0x003;
+
+      // F. set entry 1023 of stack_Table to addr of stack_page (plus flags)
+      p=(int*)(stack_table + (1023*4));
+      *p = stack_pge + 0x003; // flagss
+
+      // G. Copy executable to code_page (like prev phase)
+      MyMemcpy((char*)code_page, (char*)pcb[CRP].TF_ptr->ebx, 4096);
+
+      // H. Set things in its PCB
+      pcb[new_pid].main_table = main_table
+      pcb[new_pid].runtime = 0;
+      pcb[new_pid].total_runtime = 0;
+      pcb[new_pid].state = RUN;
+      pcb[new_pid].ppid = CRP;
+      pcb[new_pid].mode = UMODE;
+
+      // I. build it's trapframe
+      pcb[new_pid].TF_ptr = (TF_t*) (stack_page+4032);
+      pcb[new_pid].TF_ptr->eip = (unsigned int)(0x80000000); // 2G+128
+      pcb[new_pid].TF_ptr->eflags = EF_DEFAULT_VALUE | EF_INTR;
+      pcb[new_pid].TF_ptr->cs = get_cs();
+      pcb[new_pid].TF_ptr->ds = get_ds();
+      pcb[new_pid].TF_ptr->es = get_es();
+      pcb[new_pid].TF_ptr->fs = get_fs();
+      pcb[new_pid].TF_ptr->gs = get_gs();
+      pcb[new_pid].TF_ptr->(TF_t*) (0xbfffffc0); // 3G-64
+
+      // J. Clear mailbox of this new process
+      MyBZero((char*)&mbox[new_pid], sizeof(mbox_t));
+
+      // K. Enqueue the pid of this new process to run queue
+      EnQ(new_pid, &run_q);
+
+    }
+
+
+
+
+
+
+
+
+
+
+   /*
+   int end_page, new_pid;
 
    attr_t *attr = (attr_t*) pcb[CRP].TF_ptr->ebx;
 
@@ -339,7 +447,7 @@ void ForkISR(){
    }
 }
 
-
+*/
 void WaitISR(){
   int j, i, child_exit_num, *parent_exit_num_ptr;
   int zproc
