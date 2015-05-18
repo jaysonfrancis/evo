@@ -309,7 +309,7 @@ void ForkISR(){
 
       }
         // ????????????????????????????? //
-
+        x=0;
 
       // A.3 loop to scan page[], if see one page available, set page to new_pid, index this page, if got five, break loop
       for (i=0; i<MAX_PROC; i++){
@@ -361,7 +361,7 @@ void ForkISR(){
       MyMemcpy((char*)code_page, (char*)pcb[CRP].TF_ptr->ebx, 4096);
 
       // H. Set things in its PCB
-      pcb[new_pid].main_table = main_table
+      pcb[new_pid].main_table = main_table;
       pcb[new_pid].runtime = 0;
       pcb[new_pid].total_runtime = 0;
       pcb[new_pid].state = RUN;
