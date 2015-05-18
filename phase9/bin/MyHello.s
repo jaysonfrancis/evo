@@ -18,7 +18,7 @@ _start:                     # instructions begin
    #subtract 4096 from it (this is the base, real addr of the page)
 
    movl $msg, %ecx #copy $msg to register ecx
-   subl $_start, %ecx #subtract 2G from it, get x (offset)
+   subl $0x80000000, %ecx #subtract 2G from it, get x (offset)
 
    addl %ecx, %ebx #add  x (offset) to ebx (base of page) -- where msg really is
    pushl %ebx #save a copy (push it to stack)
@@ -28,24 +28,25 @@ _start:                     # instructions begin
    int $0x80 #call interrupt number 53  # MsgSnd(&msg)
 
    popl %ebx #pop to ebx (get a copy of real msg addr)
-   movl $0x35, %eax
-   int $0x80 #call interrupt number 54  # MsgRcv(&msg)
+   int $53 #call interrupt number 54  # MsgRcv(&msg)
 
-   popl %ecx, #pop to ecx (get a copy, real msg addr)
-   movl %ecx, %ebx #copy time stamp (base ecx + offset of time stamp) to ebx
-   addl $0x40, %ebx
-
-   movl $39, %eax #call interrupt number 57  # Exit(time stamp)
-   int $0x80 
+   popl %ecx #pop to ecx (get a copy, real msg addr)
+   movl 8(%ecx), %ebx #copy time stamp (base ecx + offset of time stamp) to ebx
+   
+   int $57
 
 .data                       # data segment follows code segment in RAM
 msg:                        # my msg
   .long 0                            # msg.sender
-  .long 4                          # msg.recipient
+  .long 5                         # msg.recipient
   .long 0                          # msg.time_stamp
+  .long 0
+  .long 0
+  .long 0
+  .long 0
   .ascii "Hello from a user space program."   # msg.data
   .rept 69
-    ascii "\0"
+    .ascii "\0"
   .endr
   .long 0
   .long 0

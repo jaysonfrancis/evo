@@ -68,26 +68,26 @@ void TipIRQ3(){
   asm("int $35");
 }
 
-void Fork(char *){
+void Fork(char *message){
    asm("movl %0, %%ebx; int $55" 
        : 
        : "g" ((int) message)                        // no input into asm()
-       : "ebx", "eax");
+       : "ebx", "ebx");
 }
 
-int Wait(int *){
-   asm("movl %0, %%ebx; int $56" 
-       : 
-       : "g" ((int) message)     
-       : "ebx", "eax"); 
+int Wait(int *message){
+  int pid;
+  asm("movl %1, %%ebx; int $56; movl %%ecx, %0;"
+  :"=g" (pid)
+  :"g" ((int)exit_num_ptr)
+  :"%ebx","%ecx");
+    return pid;
 }
 
-void Exit(int){
-   asm("movl %0, %%ebx; int $57" 
-       : 
-       : "g" ((int) message)                        // no input into asm()
-       : "ebx", "eax"); 
+void Exit(int message){
+  asm("movl %0, %%ebx; int $57"
+  :
+  :"g" (exit_num)
+  :"%ebx");
 }
-
-
 

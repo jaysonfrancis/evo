@@ -44,10 +44,10 @@ char index_html_data[] = {
 //   "Don't be a pathological social engineer:\n"
 //   "If given an inch, claim a mile.\n"
 //   "Be intolerable to others' mistakes, forgiving to own.\n"
-//   "Remember not it, but details on how to complain about it.\n"
 //   "Quick to nitpick, slow to praise. Quick to judge, slow to change.\n"
 //   "Fraternize to get close, identify weaknesses, then abuse with it.\n"
-//   "High standards for others, none for self. Put words into others' mouths.\n"
+//   "Remember not it, but the intricated details on how to complain about it.\n"
+//   "Others are to blame for own failures. High standards for others, low for self.\n"
 //   "Accuse heavily on trivial errors, raise guilty conscience, see a soft belly, attack!\n"
    "</BODY></HTML>\n"
 };
@@ -58,7 +58,7 @@ char hello_html_data[] = {
    "<TITLE>Monkeys and Leopard</TITLE>\n"
    "</HEAD>\n"
    "<BODY BgColor=#FFFFFF>"
-   "Monkeys in the jungle, taunting and mobbing a leopard passing by. Yelps and smugs. "
+   "Monkeys in the jungle, tauting and mobbing a leopard passing by. Yelps and smugs. "
    "The leopard hisses -- a warning, just once. The monkeys acerbate intimidations. "
    "The leopard strikes, lightningly fast. Monkeys disperse. Some slain or mauled.\n"
    "Primemates live in each others' eyes, testy social settings; a lone leopard, no one's. "
@@ -72,9 +72,24 @@ char hello_html_data[] = {
 // We'll define "root_dir[]" later. Here is a forward declare.
 extern dir_t root_dir[];                         // prototype it in advance
 
+char MySleep_data[]= {
+   #include "bin/MySleep.x"   // this must be a separate line
+};
+#define MYSLEEP_SIZE (sizeof(MySleep_data))
+
+char MyHello_data[]= {
+   #include "bin/MyHello.x"   // this must be a separate line
+};
+#define MYHELLO_SIZE (sizeof(MyHello_data))
+
+
 dir_t bin_dir[] = {
    { 16, MODE_DIR, ~0, ".", (char *)bin_dir },   // current dir
    { 17, MODE_DIR, ~0, "..", (char *)root_dir }, // parent dir, forward declared
+   { 18, MODE_EXEC, MYSLEEP_SIZE, "MySleep", (char *)MySleep_data }, // MySleep here
+   { 19, MODE_EXEC, MYSLEEP_SIZE, "8", (char *)MySleep_data }, 
+   { 20, MODE_EXEC, MYHELLO_SIZE, "MyHello", (char *)MyHello_data }, // MySleep here
+   { 21, MODE_EXEC, MYHELLO_SIZE, "9", (char *)MyHello_data },
    {  0, 0, 0, NULL, NULL },                      // no entries in dir
    { END_DIR_INODE, 0, 0, NULL, NULL }           // end of bin_dir[]
 };
@@ -107,36 +122,6 @@ dir_t root_dir[] = {
 // *********************************************************************
 fd_t fd_array[MAX_FD];  // one file descriptor for every OPEN_OBJ call
 // *********************************************************************
-// phase8 for MyHello.x
-char MyHello_data[]= {
-       #include "bin/MyHello.x"   // this must be a separate line
-    };
-    #define MYHELLO_SIZE (sizeof(MyHello_data))
-
-    dir_t bin_dir[]= {
-       { 16, MODE_DIR, ~0, ".", (char *)bin_dir },   // current dir
-       { 17, MODE_DIR, ~0, "..", (char *)root_dir }, // parent dir, forward declared
-       { 18, MODE_EXEC, MYSLEEP_SIZE, "8",       (char *)MyHello_data }, // also called "8"
-       { 19, MODE_EXEC, MYSLEEP_SIZE, "MyHello", (char *)MyHello_data }, // MySleep here
-       { 0, 0, 0, NULL, NULL },                      // no entries in dir
-       { END_DIR_INODE, 0, 0, NULL, NULL }           // end of bin_dir[]
-    };
-
-// phase 8 for MySleep.x
-char MySleep_data[]= {
-       #include "bin/MySleep.x"   // this must be a separate line
-    };
-    #define MYSLEEP_SIZE (sizeof(MySleep_data))
-
-    dir_t bin_dir[]= {
-       { 16, MODE_DIR, ~0, ".", (char *)bin_dir },   // current dir
-       { 17, MODE_DIR, ~0, "..", (char *)root_dir }, // parent dir, forward declared
-       { 18, MODE_EXEC, MYSLEEP_SIZE, "8",       (char *)MySleep_data }, // also called "8"
-       { 19, MODE_EXEC, MYSLEEP_SIZE, "MySleep", (char *)MySleep_data }, // MySleep here
-       { 0, 0, 0, NULL, NULL },                      // no entries in dir
-       { END_DIR_INODE, 0, 0, NULL, NULL }           // end of bin_dir[]
-    };
-
 
 // *********************************************************************
 // File Mgr, a process to answer queries and return file contents

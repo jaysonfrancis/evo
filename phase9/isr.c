@@ -207,7 +207,7 @@ void MsgSndISR(){
   }
 }
 
-  void MsgRcvISR(){
+void MsgRcvISR(){
   
   msg_t *temp;
   int pid;
@@ -221,10 +221,6 @@ void MsgSndISR(){
     *((msg_t *)pcb[CRP].TF_ptr->ebx) = *temp;
   }
 }
-
-
-
-
 
 void IRQ7ISR(){ //phase 4
   outportb(0x20,0x67); // Dismiss IRQ7
@@ -390,73 +386,16 @@ void ForkISR(){
       EnQ(new_pid, &run_q);
 
     }
-
-
-
-
-
-
-
-
-
-
-   /*
-   int end_page, new_pid;
-
-   attr_t *attr = (attr_t*) pcb[CRP].TF_ptr->ebx;
-
-   new_pid = DeQ(&none_q);
-
-   if ( new_pid == -1 )
-   {
-      cons_printf("no more PID/RAM available");
-      pcb[CRP].TF_ptr->ecx = -1;
-      
-      return;
-   }
-   else
-   {
-      //setup new process
-      pcb[CRP].TF_ptr->ecx = new_pid;
-      pcb[new_pid].ppid = CRP;
-      
-      CreateISR(new_pid);
-
-      //assign RAM to owner
-      page[new_pid].owner = new_pid;
-      MyBZero((char*)page[new_pid].addr, 0x1000); 
-      MyMemcpy((char*) page[new_pid].addr, attr->data, attr->size);
-
-      //where to copy
-      end_page =  0x1000 - sizeof(TF_t) + 1;
-      MyMemcpy(
-               (char*)(page[new_pid].addr + end_page),
-               (char*)pcb[new_pid].TF_ptr, 
-               sizeof(TF_t)
-              );
-
-      
-      pcb[new_pid].TF_ptr = (TF_t*) (page[new_pid].addr + end_page);
-
-      
-      pcb[new_pid].TF_ptr->eip = page[new_pid].addr + 128;
-      
-      EnQ(new_pid, &run_q);
-      pcb[new_pid].state = RUN;
-
-   }
-}
-
-*/
+   
 void WaitISR(){
   int j, i, child_exit_num, *parent_exit_num_ptr;
-  int zproc
+  int zproc;
   //looking for zombie process
   for(i = 0; i < MAX_PROC; i++){
     if(pcb[i].ppid==CRP && pcb[i].state==ZOMBIE) zproc = i;
   }//end for
 
-  if (zproc==-1){
+  if (zproc!= MAX_PROC){
     pcb[CRP].TF_ptr->eax = zproc;
 
     child_exit_num = pcb[zproc].TF_ptr->ebx;
@@ -470,7 +409,7 @@ void WaitISR(){
 
     //killing zombie process
     EnQ(zproc, &none_q);
-    pcb[zproc].total_runtime += pcb[pid].runtime;
+    pcb[zproc].total_runtime += pcb[zproc].runtime;
     pcb[zproc].runtime = 0;
     pcb[zproc].state = NONE;
 
@@ -478,13 +417,13 @@ void WaitISR(){
      //reclaim memory
    for(j = 0; j < MAX_PAGE; j++)
    {
-      if(page[j].owner == pid){
+      if(page[j].owner == zproc){
          page[j].owner = -1;
          MyBzero((char*)page[j].addr, 0x1000);
       }
    }
 
-   zproc = -1
+   zproc = -1;
 
   }else{
     pcb[CRP].state = WAIT_CHILD;
@@ -497,7 +436,6 @@ void ExitISR(){
 
   ppid = pcb[CRP].ppid;
 
-  EnQ(CRP, &none_q);
 
   if(pcb[ppid].state == WAIT_CHILD){
     pcb[ppid].TF_ptr->eax = CRP;
@@ -509,7 +447,7 @@ void ExitISR(){
     pcb[ppid].state = RUN;
 
     EnQ(CRP, &none_q);
-    pcb[CRP].total_runtime += pcb[pid].runtime;
+    pcb[CRP].total_runtime += pcb[CRP].runtime;
     pcb[CRP].runtime = 0;
     pcb[CRP].state = NONE;
 

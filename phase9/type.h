@@ -72,8 +72,8 @@ typedef struct {
 } terminal_t;
 
 //added in phase8
-typdef struct{
+typedef struct{
   int owner, addr;
-} page_t
+} page_t;
 
 #endif _TYPE_H_
